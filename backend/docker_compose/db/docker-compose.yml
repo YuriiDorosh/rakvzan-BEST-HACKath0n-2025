@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  # ---------- PRIMARY (postgres) ----------
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init/init_roles.sh:/docker-entrypoint-initdb.d/init_roles.sh
+      # - ./postgres-init/custom_pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      - ./postgres-init/custom_pg_hba.conf:/etc/postgresql/pg_hba.conf
+    networks:
+      - backend
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    command: [
+      "postgres",
+      "-c", "wal_level=replica",
+      "-c", "hot_standby=on",
+      "-c", "max_wal_senders=10",
+      "-c", "max_replication_slots=10",
+      "-c", "hot_standby_feedback=on",
+      "-c", "listen_addresses=*",
+      # "-c", "hba_file=/var/lib/postgresql/data/pg_hba.conf"
+      "-c", "hba_file=/etc/postgresql/pg_hba.conf",
+      # ------- LOGGING PARAMETERS -------
+      "-c", "logging_collector=on",
+      "-c", "log_statement=all",
+      "-c", "log_min_duration_statement=0",
+      "-c", "log_replication_commands=on",
+      "-c", "log_connections=on",
+      "-c", "log_disconnections=on"
+    ]
+    user: "postgres"
+
+  # ---------- BACKUP ----------
+  backup:
+    image: postgres:15
+    container_name: postgres_backup
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - ./backup.sh:/backup.sh
+    networks:
+      - backend
+    depends_on:
+      - postgres
+    command: sh -c "while true; do /backup.sh; sleep 86400; done"
+
+  # ---------- REPLICA1 ----------
+  replica1:
+    image: postgres:15
+    container_name: postgres_replica1
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      PGUSER: replicator
+      PGPASSWORD: ${POSTGRES_REPLICATION_PASSWORD}
+      PGDATABASE: postgres
+    # volumes:
+    #   - replica1_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h postgres -U replicator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    command: >
+      sh -c "until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot_replica1 --host=postgres --port=5432 --username=replicator; do echo 'Waiting for primary...'; sleep 2; done; chmod 0700 /var/lib/postgresql/data && exec postgres"
+    user: postgres
+
+  # ---------- REPLICA2 ----------
+  replica2:
+    image: postgres:15
+    container_name: postgres_replica2
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      PGUSER: replicator
+      PGPASSWORD: ${POSTGRES_REPLICATION_PASSWORD}
+      PGDATABASE: postgres
+    # volumes:
+    #   - replica2_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot_replica2 --host=postgres --port=5432 --username=replicator; do echo 'Waiting for primary...'; sleep 2; done; chmod 0700 /var/lib/postgresql/data && exec postgres"
+    user: postgres
+
+# ---------- VOLUMES ----------
+volumes:
+  postgres_data:
+  # replica1_data:
+  # replica2_data:
+
+# ---------- NETWORKS ----------
+networks:
+  backend:
+    external: true

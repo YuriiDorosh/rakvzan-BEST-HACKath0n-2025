@@ -1,0 +1,213 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: ../..
+      dockerfile: docker_compose/django/Dockerfile
+    container_name: django
+    restart: unless-stopped
+    volumes:
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+      - static_volume:/app/static
+      - media_volume:/media
+      - ../../logs/django:/app/logs/django
+    env_file:
+      - ../../.env
+    depends_on:
+      - redis
+    networks:
+      - backend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: ${DJANGO_DEBUG}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/healthcheck/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  celery_worker_1:
+    build:
+      context: ../.. 
+      dockerfile: docker_compose/worker_1/Dockerfile
+    container_name: celery_worker_1
+    restart: unless-stopped
+    volumes:
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+    env_file:
+      - ../../.env
+    depends_on:
+      - redis
+    networks:
+      - backend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+
+  celery_worker_2:
+    build:
+      context: ../.. 
+      dockerfile: docker_compose/worker_2/Dockerfile
+    container_name: celery_worker_2
+    restart: unless-stopped
+    volumes:
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+    env_file:
+      - ../../.env
+    depends_on:
+      - redis
+    networks:
+      - backend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+
+  celery_worker_3:
+    build:
+      context: ../.. 
+      dockerfile: docker_compose/worker_3/Dockerfile
+    container_name: celery_worker_3
+    restart: unless-stopped
+    volumes:
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+    env_file:
+      - ../../.env
+    depends_on:
+      - redis
+    networks:
+      - backend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+
+  celery_worker_4:
+    build:
+      context: ../.. 
+      dockerfile: docker_compose/worker_4/Dockerfile
+    container_name: celery_worker_4
+    restart: unless-stopped
+    volumes:
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+    env_file:
+      - ../../.env
+    depends_on:
+      - redis
+    networks:
+      - backend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+
+  celery_beat:
+    build:
+      context: ../.. 
+      dockerfile: docker_compose/beat/Dockerfile
+    container_name: celery_beat
+    restart: unless-stopped
+    volumes:
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+    env_file:
+      - ../../.env
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+  flower:
+    build: 
+      context: ../..
+      dockerfile: docker_compose/flower/Dockerfile
+    container_name: flower
+    restart: unless-stopped
+    volumes:
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - django
+      - redis
+      - celery_worker_1
+      - celery_worker_2
+    env_file:
+      - ../../.env
+    networks:
+      - backend
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    hostname: redis
+    ports:
+      - "6380:6379"
+    networks:
+    - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  nginx:
+    build: 
+      context: ../..
+      dockerfile: docker_compose/nginx/Dockerfile
+    container_name: nginx
+    restart: unless-stopped
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../../logs/nginx:/var/log/nginx
+      - ../../src:/app/src 
+      - ../../.env:/app/.env
+    env_file:
+      - ../../.env
+    depends_on:
+      - django
+    networks:
+      - backend
+    environment:
+      NGINX_PORT: ${NGINX_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  static_volume:
+  media_volume:
+
+networks:
+  backend:
+    external: true
