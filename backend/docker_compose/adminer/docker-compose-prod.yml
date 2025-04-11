@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  adminer-prod:
+    image: adminer
+    container_name: adminer-postgres-prod
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-prod
+    environment:
+        ADMINER_DEFAULT_SERVER: postgres-prod
+
+networks:
+  backend-prod:
+    external: true

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres-prod:
+    image: postgres:15
+    container_name: postgres-prod
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-prod
+    ports:
+      - "5432:5432"
+
+  backup-prod:
+    image: postgres:15
+    container_name: postgres_backup-prod
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - ./backup-prod.sh:/backup.sh
+    networks:
+      - backend-prod
+    depends_on:
+      - postgres-prod
+    command: sh -c "while true; do /backup.sh; sleep 86400; done"
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-prod:
+    external: true
