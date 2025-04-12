@@ -30,7 +30,9 @@ THIRD_PARTY = [
     # Ninja
     "ninja_extra",
     "ninja_jwt",
-    # "ninja-schema",
+    # "totp",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
 ]
 
 if env("USE_ELASTIC") == 1:

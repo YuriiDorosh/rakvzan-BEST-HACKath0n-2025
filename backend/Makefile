@@ -252,3 +252,9 @@ down-apm:
 
 logs-apm:
 	$(LOGS) $(APM_CONTAINER)
+
+stop-all:
+	docker stop $(docker ps -q -a)
+
+rm-all:
+	docker rm $(docker ps -q -a)
