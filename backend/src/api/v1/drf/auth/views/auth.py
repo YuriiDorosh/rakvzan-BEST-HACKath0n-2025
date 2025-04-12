@@ -6,13 +6,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from src.api.v1.drf.auth.serializers import (
     LoginUserSerializer,
     UserAuthSerializer,
 )
-from src.apps.auth.services.emails import send_email
-from src.apps.auth.services.tokens import create_jwt_pair_for_user
+from src.apps.users.services.emails import send_email
+from src.apps.users.services.tokens import create_jwt_pair_for_user
 from src.apps.common.permissions import IsNotAuthenticated
 
 User = get_user_model()
@@ -27,6 +26,7 @@ class RegistrateUserView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         try:
             if serializer.is_valid(raise_exception=True):
+                print(serializer.validated_data)
                 user = serializer.save()
                 token = User.objects.generate_email_token(user)
                 send_email(
@@ -67,15 +67,3 @@ class UserLoginView(CreateAPIView):
             return Response(data=create_jwt_pair_for_user(user), status=status.HTTP_200_OK)
 
         return Response(data={"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserLogoutView(APIView):
-    @method_decorator(ratelimit(key="ip", rate="5/m", method="POST", block=True))
-    def get(self, request: Request):
-        try:
-            User.objects.blacklist_token(request)
-
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)

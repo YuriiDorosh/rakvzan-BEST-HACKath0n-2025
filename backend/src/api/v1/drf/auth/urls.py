@@ -2,6 +2,9 @@ import src.api.v1.drf.auth.views as views
 from django.urls import path
 
 urlpatterns = [
+    # User
+    path("register/", views.RegistrateUserView.as_view(), name="register"),
+    path("login/", views.UserLoginView.as_view(), name="login"),
     # User password
     path("change-password/", views.ChangePasswordView.as_view(), name="change-password"),
     path("reset-password/", views.ResetPasswordView.as_view(), name="reset-password"),
