@@ -21,6 +21,7 @@ class CommentEntity:
     id: int
     establishment_id: int
     user_id: int
+    user_name: str
     comment: str
     rating: Optional[float] = None
     images: Optional[List[CommentImageEntity]] = None

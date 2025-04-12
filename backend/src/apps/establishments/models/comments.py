@@ -49,6 +49,7 @@ class Comment(models.Model):
             id=self.id,
             establishment_id=self.establishment.id,
             user_id=self.user.id,
+            user_name=self.user.username,
             comment=self.comment,
             rating=self.raiting,
             images=[image.to_entity() for image in self.images.all()],
