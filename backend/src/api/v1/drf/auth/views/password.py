@@ -12,7 +12,7 @@ from src.api.v1.drf.auth.serializers import (
 )
 from src.api.v1.drf.schemas import ApiResponse
 from src.apps.common.permissions import IsNotAuthenticated
-
+from src.apps.auth.services.emails import send_email
 User = get_user_model()
 
 
@@ -64,7 +64,7 @@ class ResetPasswordConfirmView(CreateAPIView):
                     data={"message": "Invalid or expired token"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
+            
             user = User.objects.get(id=user_id)
             User.objects.change_password(user, serializer.validated_data["new_password1"])
             cache.delete(token)

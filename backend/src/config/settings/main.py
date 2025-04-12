@@ -31,6 +31,7 @@ config_files = [
     "static.py",
     "templates.py",
     "timezone.py",
+    "smtp.py",
 ]
 
 if env("USE_ELASTIC") == 1:
