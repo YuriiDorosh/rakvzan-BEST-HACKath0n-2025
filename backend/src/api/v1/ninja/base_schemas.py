@@ -28,3 +28,6 @@ class ApiResponse(Schema, Generic[TData]):
     data: TData | dict = Field(default_factory=dict)
     meta: dict[str, Any] = Field(default_factory=dict)
     errors: list[Any] = Field(default_factory=list)
+    
+class StatusOkSchema(Schema):
+    status: bool
