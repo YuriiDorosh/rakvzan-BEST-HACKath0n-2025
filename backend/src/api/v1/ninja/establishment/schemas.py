@@ -47,6 +47,7 @@ class CommentSchema(BaseModel):
     id: int
     establishment_id: int
     user_id: int
+    user_name: str
     comment: str
     rating: Optional[float] = None
     images: Optional[List[CommentImageEntity]] = None
@@ -60,6 +61,7 @@ class CommentSchema(BaseModel):
             id=entity.id,
             establishment_id=entity.establishment_id,
             user_id=entity.user_id,
+            user_name=entity.user_name,
             comment=entity.comment,
             rating=entity.rating,
             images=entity.images,
