@@ -1,5 +1,6 @@
-from grappelli.dashboard import modules, Dashboard
-from grappelli.dashboard.modules import ModelList, AppList
+from grappelli.dashboard import Dashboard
+from grappelli.dashboard.modules import AppList, ModelList
+
 
 class CustomIndexDashboard(Dashboard):
     def init_with_context(self, context):
@@ -7,11 +8,11 @@ class CustomIndexDashboard(Dashboard):
             AppList(
                 title="Administration",
                 models=["django.contrib.*"],
-            )
+            ),
         )
         self.children.append(
             ModelList(
                 title="My Models",
                 models=["src.apps.*"],
-            )
+            ),
         )

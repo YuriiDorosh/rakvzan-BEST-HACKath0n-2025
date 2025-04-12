@@ -1,13 +1,9 @@
 import os
 
-from django.conf import settings
-from django.http import (
-    FileResponse,
-    Http404,
-)
-from django.utils.decorators import method_decorator
-
 import pyotp
+from django.conf import settings
+from django.http import FileResponse, Http404
+from django.utils.decorators import method_decorator
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_ratelimit.decorators import ratelimit
 from rest_framework import status
@@ -18,10 +14,7 @@ from src.api.v1.drf.auth.serializers import (
     Enable2FASerializer,
 )
 from src.apps.auth.services.qr_code import generate_qr_code_file
-
-from src.apps.common.permissions import (
-    IsNot2FA,
-)
+from src.apps.common.permissions import IsNot2FA
 
 
 class Enable2FAView(CreateAPIView):

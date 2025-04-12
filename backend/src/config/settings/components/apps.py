@@ -1,11 +1,11 @@
 import os
 import sys
 
-from config.settings.components.boilerplate import BASE_DIR
 import environ
+from config.settings.components.boilerplate import BASE_DIR
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env')
+environ.Env.read_env(BASE_DIR / ".env")
 
 DJANGO_APPS = [
     "django.contrib.admin",

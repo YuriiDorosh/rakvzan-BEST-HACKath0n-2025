@@ -1,5 +1,5 @@
 fail_fast: false
-exclude: ^.*\b(migrations)\b.*$|^.*__init__\.py$
+exclude: ^.*\b(migrations)\b.*$|^.*__init__\.py$|asgi.py|admin.py
 repos:
 
   - repo: https://github.com/psf/black
@@ -44,15 +44,6 @@ repos:
           - flake8-comprehensions>=3.3.1
           - flake8-eradicate>=1.0.0
           - dlint>=0.11.0
-        stages: [pre-commit]
-
-  - repo: https://github.com/myint/docformatter
-    rev: v1.7.5
-    hooks:
-      - id: docformatter
-        args:
-          - "--in-place"
-          - "--blank"
         stages: [pre-commit]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit

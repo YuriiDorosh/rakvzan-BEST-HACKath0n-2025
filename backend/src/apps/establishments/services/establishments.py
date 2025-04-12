@@ -1,61 +1,44 @@
 from abc import ABC, abstractmethod
-from django.shortcuts import get_object_or_404
-from django.core.files.uploadedfile import UploadedFile
 from typing import List, Optional
-from django.db.models import Q
+
 from django.contrib.auth.models import User
-from src.apps.establishments.models.establishments import (
-    Establishment as EstablishmentModel, 
-    EstablishmentPhoto as EstablishmentPhotoModel
-)
+from django.core.files.uploadedfile import UploadedFile
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from src.apps.establishments.entities import (
-    EstablishmentEntity, 
-    EstablishmentSimpleEntity, 
-    EstablishmentPhotoEntity
+    EstablishmentEntity,
+    EstablishmentPhotoEntity,
+    EstablishmentSimpleEntity,
 )
+from src.apps.establishments.models.establishments import \
+    Establishment as EstablishmentModel
+from src.apps.establishments.models.establishments import \
+    EstablishmentPhoto as EstablishmentPhotoModel
+
 
 class EstablishmentPhotoService(ABC):
-    """
-    Service for managing establishment photos.
-    """
+    """Service for managing establishment photos."""
 
     @abstractmethod
     def get_photo_by_id(self, photo_id: int) -> Optional[EstablishmentPhotoEntity]:
-        """
-        Get a photo by its ID.
-        """
-        pass
+        """Get a photo by its ID."""
 
     @abstractmethod
     def get_photos_by_establishment_id(self, establishment_id: int) -> List[EstablishmentPhotoEntity]:
-        """
-        Get all photos for a specific establishment.
-        """
-        pass
+        """Get all photos for a specific establishment."""
 
     @abstractmethod
-    def create_photos(
-        self,
-        establishment_id: int,
-        photo_files: List[UploadedFile]
-    ) -> List[EstablishmentPhotoEntity]:
-        """
-        Create new photos for an establishment from the list of UploadedFile.
-        """
-        pass
+    def create_photos(self, establishment_id: int, photo_files: List[UploadedFile]) -> List[EstablishmentPhotoEntity]:
+        """Create new photos for an establishment from the list of
+        UploadedFile."""
 
     @abstractmethod
     def delete_photo(self, photo_id: int) -> bool:
-        """
-        Delete a photo by its ID.
-        """
-        pass
+        """Delete a photo by its ID."""
 
 
 class ORMEstablishmentPhotoService(EstablishmentPhotoService):
-    """
-    Implementation of EstablishmentPhotoService using Django ORM.
-    """
+    """Implementation of EstablishmentPhotoService using Django ORM."""
 
     def get_photo_by_id(self, photo_id: int) -> Optional[EstablishmentPhotoEntity]:
         try:
@@ -68,19 +51,12 @@ class ORMEstablishmentPhotoService(EstablishmentPhotoService):
         photos_qs = EstablishmentPhotoModel.objects.filter(establishment_id=establishment_id)
         return [photo.to_entity() for photo in photos_qs]
 
-    def create_photos(
-        self,
-        establishment_id: int,
-        photo_files: List[UploadedFile]
-    ) -> List[EstablishmentPhotoEntity]:
+    def create_photos(self, establishment_id: int, photo_files: List[UploadedFile]) -> List[EstablishmentPhotoEntity]:
         establishment = get_object_or_404(EstablishmentModel, pk=establishment_id)
 
         created_entities = []
         for file in photo_files:
-            photo_obj = EstablishmentPhotoModel.objects.create(
-                establishment=establishment,
-                photo=file
-            )
+            photo_obj = EstablishmentPhotoModel.objects.create(establishment=establishment, photo=file)
             created_entities.append(photo_obj.to_entity())
         return created_entities
 
@@ -94,16 +70,11 @@ class ORMEstablishmentPhotoService(EstablishmentPhotoService):
 
 
 class EstablishmentService(ABC):
-    """
-    Service for managing establishments.
-    """
+    """Service for managing establishments."""
 
     @abstractmethod
     def get_establishment_by_id(self, establishment_id: int) -> Optional[EstablishmentEntity]:
-        """
-        Get an establishment by its ID.
-        """
-        pass
+        """Get an establishment by its ID."""
 
     @abstractmethod
     def get_all_establishments(
@@ -133,41 +104,28 @@ class EstablishmentService(ABC):
         is_verified: Optional[bool] = None,
         is_public: Optional[bool] = None,
         has_wifi: Optional[bool] = None,
-        ) -> List[EstablishmentSimpleEntity]:
-        """
-        Get all establishments.
-        """
-        pass
+    ) -> List[EstablishmentSimpleEntity]:
+        """Get all establishments."""
 
     @abstractmethod
-    def create_establishment(self, 
-                             user: User,
-                             establishment_data: dict,
-                             ) -> EstablishmentEntity:
-        """
-        Create a new establishment.
-        """
-        pass
+    def create_establishment(
+        self,
+        user: User,
+        establishment_data: dict,
+    ) -> EstablishmentEntity:
+        """Create a new establishment."""
 
     @abstractmethod
     def update_establishment(self, establishment_id: int, establishment_data: dict) -> EstablishmentEntity:
-        """
-        Update an existing establishment.
-        """
-        pass
+        """Update an existing establishment."""
 
     @abstractmethod
     def delete_establishment(self, establishment_id: int) -> bool:
-        """
-        Delete an establishment by its ID.
-        """
-        pass
-    
+        """Delete an establishment by its ID."""
+
 
 class ORMEstablishmentService(EstablishmentService):
-    """
-    Implementation of EstablishmentService using Django ORM.
-    """
+    """Implementation of EstablishmentService using Django ORM."""
 
     def get_establishment_by_id(self, establishment_id: int) -> Optional[EstablishmentEntity]:
         try:
@@ -202,96 +160,96 @@ class ORMEstablishmentService(EstablishmentService):
         is_deleted: Optional[bool] = None,
         is_verified: Optional[bool] = None,
         is_public: Optional[bool] = None,
-        has_wifi: Optional[bool] = None
+        has_wifi: Optional[bool] = None,
     ) -> List[EstablishmentSimpleEntity]:
-        
         filters = Q()
         try:
-            
             if name:
                 filters &= Q(name__icontains=name)
-            
+
             if address:
                 filters &= Q(address__icontains=address)
-            
+
             if open_at_on_monday_to_friday:
                 filters &= Q(open_at_on_monday_to_friday=open_at_on_monday_to_friday)
-            
+
             if open_at_on_saturday:
                 filters &= Q(open_at_on_saturday=open_at_on_saturday)
-            
+
             if description:
                 filters &= Q(description__icontains=description)
-            
+
             if owner_ids:
                 owner_ids_list = [int(owner_id) for owner_id in owner_ids.split(",")]
                 filters &= Q(owner_id__in=owner_ids_list)
-            
+
             if has_ramp is not None:
                 filters &= Q(has_ramp=has_ramp)
-                
+
             if has_parking is not None:
                 filters &= Q(has_parking=has_parking)
-                
+
             if has_bathroom is not None:
                 filters &= Q(has_bathroom=has_bathroom)
-                
+
             if has_elevator is not None:
                 filters &= Q(has_elevator=has_elevator)
-                
+
             if has_tactical_floor is not None:
                 filters &= Q(has_tactical_floor=has_tactical_floor)
-                
+
             if has_signage is not None:
                 filters &= Q(has_signage=has_signage)
-                
+
             if has_braille is not None:
                 filters &= Q(has_braille=has_braille)
-                
+
             if has_audio is not None:
                 filters &= Q(has_audio=has_audio)
-                
+
             if has_guide is not None:
                 filters &= Q(has_guide=has_guide)
-                
+
             if has_sign_language is not None:
                 filters &= Q(has_sign_language=has_sign_language)
-                
+
             if has_veterans_discounts is not None:
                 filters &= Q(has_veterans_discounts=has_veterans_discounts)
-                
+
             if raiting is not None:
                 filters &= Q(raiting=raiting)
-                
+
             if is_active is not None:
                 filters &= Q(is_active=is_active)
-                
+
             if is_deleted is not None:
                 filters &= Q(is_deleted=is_deleted)
-                
+
             if is_verified is not None:
                 filters &= Q(is_verified=is_verified)
-                
+
             if is_public is not None:
                 filters &= Q(is_public=is_public)
-                
+
             if has_wifi is not None:
                 filters &= Q(has_wifi=has_wifi)
-                
+
             if latitude is not None and longitude is not None:
                 filters |= Q(latitude=latitude, longitude=longitude)
-                
-            establishments = EstablishmentModel.objects.filter(
-                filters
-                ).prefetch_related(
+
+            establishments = (
+                EstablishmentModel.objects.filter(filters)
+                .prefetch_related(
                     "photos",
                     "comments",
                     "comments__images",
                     "comments__likes",
-                ).select_related(
+                )
+                .select_related(
                     "owner",
                 )
-            
+            )
+
             return [establishment.to_simple_entity() for establishment in establishments]
         except ValueError as e:
             # Handle the case where the conversion to int fails
@@ -301,18 +259,16 @@ class ORMEstablishmentService(EstablishmentService):
             # Handle any other exceptions that may occur
             print(f"An error occurred: {e}")
             return []
-        
-    def create_establishment(self, 
-                             user: User,
-                             establishment_data: dict,
-                             ) -> EstablishmentEntity:
-        establishment = EstablishmentModel(
-            owner=user,
-            **establishment_data
-        )
+
+    def create_establishment(
+        self,
+        user: User,
+        establishment_data: dict,
+    ) -> EstablishmentEntity:
+        establishment = EstablishmentModel(owner=user, **establishment_data)
         establishment.save()
         return establishment.to_entity()
-    
+
     def update_establishment(self, establishment_id: int, establishment_data: dict) -> EstablishmentEntity:
         try:
             establishment = EstablishmentModel.objects.get(id=establishment_id)
@@ -322,7 +278,7 @@ class ORMEstablishmentService(EstablishmentService):
             return establishment.to_entity()
         except EstablishmentModel.DoesNotExist:
             return None
-        
+
     def delete_establishment(self, establishment_id: int) -> bool:
         try:
             establishment = EstablishmentModel.objects.get(id=establishment_id)
@@ -330,5 +286,3 @@ class ORMEstablishmentService(EstablishmentService):
             return True
         except EstablishmentModel.DoesNotExist:
             return False
-
-        

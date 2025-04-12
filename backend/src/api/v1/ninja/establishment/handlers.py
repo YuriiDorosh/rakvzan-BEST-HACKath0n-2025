@@ -1,31 +1,22 @@
-from ninja import Query, File
-from ninja.files import UploadedFile
-from ninja.constants import NOT_SET
-from ninja_extra import (
-    api_controller,
-    route,
-    permissions,
-)
 from typing import List
-from ninja_jwt.authentication import JWTAuth
+
 from django.http import HttpRequest
-from src.apps.establishments.services.establishments import (
-    EstablishmentService, 
-    ORMEstablishmentService,
-    EstablishmentPhotoService,
-    ORMEstablishmentPhotoService
-)
+from ninja import File, Query
+from ninja.constants import NOT_SET
+from ninja.files import UploadedFile
+from ninja_extra import api_controller, permissions, route
+from ninja_jwt.authentication import JWTAuth
+from src.api.v1.ninja.base_schemas import ApiResponse, StatusOkSchema
 from src.api.v1.ninja.establishment.schemas import (
     EstablishmentCreateSchema,
-    EstablishmentSimpleSchema,
     EstablishmentSchema,
-    CommentSchema,
-    CommentImageSchema,
-    CommentLikeSchema,
+    EstablishmentSimpleSchema,
     EstablishmentUpdateSchema,
 )
-from src.api.v1.ninja.base_schemas import ApiResponse, StatusOkSchema
-from src.api.meta import get_meta_data
+from src.apps.establishments.services.establishments import (
+    EstablishmentPhotoService, EstablishmentService,
+    ORMEstablishmentPhotoService, ORMEstablishmentService,
+)
 
 
 @api_controller(
@@ -38,9 +29,9 @@ class EstablishmentController:
         super().__init__()
         self.establishment_service: EstablishmentService = ORMEstablishmentService()
         self.establishment_photo_service: EstablishmentPhotoService = ORMEstablishmentPhotoService()
-        
+
     @route.get(
-        "/list", 
+        "/list",
         response=ApiResponse[List[EstablishmentSimpleSchema]],
         auth=NOT_SET,
         permissions=[permissions.AllowAny],
@@ -72,9 +63,8 @@ class EstablishmentController:
         is_deleted: bool = Query(None),
         is_verified: bool = Query(None),
         is_public: bool = Query(None),
-        has_wifi: bool = Query(None)
+        has_wifi: bool = Query(None),
     ) -> ApiResponse[List[EstablishmentSimpleSchema]]:
-        
         establishments_list = self.establishment_service.get_all_establishments(
             latitude=latitude,
             longitude=longitude,
@@ -100,18 +90,17 @@ class EstablishmentController:
             is_deleted=is_deleted,
             is_verified=is_verified,
             is_public=is_public,
-            has_wifi=has_wifi
+            has_wifi=has_wifi,
         )
-        
+
         data = [EstablishmentSimpleSchema.from_entity(establishment) for establishment in establishments_list]
-        
+
         return ApiResponse(
             data=data,
         )
-        
-    
+
     @route.get(
-        "/{establishment_id}", 
+        "/{establishment_id}",
         response=ApiResponse[EstablishmentSchema],
         auth=NOT_SET,
         permissions=[permissions.AllowAny],
@@ -121,20 +110,19 @@ class EstablishmentController:
         request: HttpRequest,
         establishment_id: int,
     ) -> ApiResponse[EstablishmentSchema]:
-        
         establishment = self.establishment_service.get_establishment_by_id(establishment_id)
-        
+
         if not establishment:
             return ApiResponse(
                 data=None,
             )
-        
+
         data = EstablishmentSchema.from_entity(establishment)
-        
+
         return ApiResponse(
             data=data,
         )
-        
+
     @route.post(
         "/",
         response=ApiResponse[EstablishmentSchema],
@@ -146,20 +134,19 @@ class EstablishmentController:
         request: HttpRequest,
         payload: EstablishmentCreateSchema,
     ) -> ApiResponse[EstablishmentSchema]:
-        
         user = request.user
-        
+
         establishment = self.establishment_service.create_establishment(
             user=user,
             establishment_data=payload.dict(),
         )
-        
+
         data = EstablishmentSchema.from_entity(establishment)
-        
+
         return ApiResponse(
             data=data,
         )
-        
+
     @route.put(
         "/{establishment_id}",
         response=ApiResponse[EstablishmentSchema],
@@ -172,18 +159,17 @@ class EstablishmentController:
         establishment_id: int,
         payload: EstablishmentUpdateSchema,
     ) -> ApiResponse[EstablishmentSchema]:
-                
         establishment = self.establishment_service.update_establishment(
             establishment_id=establishment_id,
             establishment_data=payload.dict(),
         )
-        
+
         data = EstablishmentSchema.from_entity(establishment)
-        
+
         return ApiResponse(
             data=data,
         )
-        
+
     @route.delete(
         "/{establishment_id}",
         response=ApiResponse[StatusOkSchema],
@@ -195,17 +181,12 @@ class EstablishmentController:
         request: HttpRequest,
         establishment_id: int,
     ) -> ApiResponse[StatusOkSchema]:
-        
         is_establishment_deleted = self.establishment_service.delete_establishment(
             establishment_id=establishment_id,
         )
-        
-        return ApiResponse(
-            data=StatusOkSchema(
-                status=is_establishment_deleted
-            )
-        )
-            
+
+        return ApiResponse(data=StatusOkSchema(status=is_establishment_deleted))
+
     @route.post(
         "/{establishment_id}/photos/upload",
         response=ApiResponse[EstablishmentSchema],
@@ -218,20 +199,19 @@ class EstablishmentController:
         establishment_id: int,
         photos: List[UploadedFile] = File(...),
     ) -> ApiResponse[EstablishmentSchema]:
-                        
-            self.establishment_photo_service.create_photos(
-                establishment_id=establishment_id,
-                photo_files=photos,
-            )
-            
-            establishment = self.establishment_service.get_establishment_by_id(establishment_id)
-            
-            data = EstablishmentSchema.from_entity(establishment)
-            
-            return ApiResponse(
-                data=data,
-            )
-        
+        self.establishment_photo_service.create_photos(
+            establishment_id=establishment_id,
+            photo_files=photos,
+        )
+
+        establishment = self.establishment_service.get_establishment_by_id(establishment_id)
+
+        data = EstablishmentSchema.from_entity(establishment)
+
+        return ApiResponse(
+            data=data,
+        )
+
     @route.delete(
         "/{establishment_id}/photos/{photo_id}",
         response=ApiResponse[StatusOkSchema],
@@ -244,47 +224,12 @@ class EstablishmentController:
         establishment_id: int,
         photo_id: int,
     ) -> ApiResponse[StatusOkSchema]:
-        
         is_photo_deleted = self.establishment_photo_service.delete_photo(
             photo_id=photo_id,
         )
-        
+
         return ApiResponse(
             data=StatusOkSchema(
                 status=is_photo_deleted,
-            )
+            ),
         )
-        
-        
-    # @route.post(
-    #     "/{establishment_id}/comments",
-    #     response=ApiResponse[CommentSchema],
-    #     auth=JWTAuth(),
-    #     permissions=[permissions.IsAuthenticated],
-    # )
-    # def create_comment(
-    #     self,
-    #     request: HttpRequest,
-    #     establishment_id: int,
-    #     payload: CommentSchema,
-    # ) -> ApiResponse[CommentSchema]:
-        
-    #     user = request.user
-    #     establishment = self.establishment_service.get_establishment_by_id(establishment_id)
-        
-    #     if not establishment:
-    #         return ApiResponse(
-    #             data=None,
-    #         )
-        
-    #     comment = self.establishment_service.create_comment(
-    #         user=user,
-    #         establishment=establishment,
-    #         payload=payload,
-    #     )
-        
-    #     data = CommentSchema.from_entity(comment)
-        
-    #     return ApiResponse(
-    #         data=data,
-    #     )

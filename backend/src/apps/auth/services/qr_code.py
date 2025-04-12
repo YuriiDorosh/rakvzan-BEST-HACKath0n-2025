@@ -1,10 +1,7 @@
 import os
 import threading
 import uuid
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import datetime, timedelta
 from typing import Union
 
 import qrcode

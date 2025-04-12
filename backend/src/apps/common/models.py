@@ -1,25 +1,22 @@
 import time
 
-from django.db import (
-    IntegrityError,
-    models,
-)
+from django.db import IntegrityError, models
 
 
 class TimedAndUnixIdBaseModel(models.Model):
-    id = models.BigIntegerField( # noqa
-        verbose_name='Unix Timestamp ID',
+    id = models.BigIntegerField(  # noqa
+        verbose_name="Unix Timestamp ID",
         unique=True,
         editable=False,
         primary_key=True,
-        db_comment='Unix timestamp ID for the model',
+        db_comment="Unix timestamp ID for the model",
     )
     created_at = models.DateTimeField(
-        verbose_name='Created At',
+        verbose_name="Created At",
         auto_now_add=True,
     )
     updated_at = models.DateTimeField(
-        verbose_name='Updated At',
+        verbose_name="Updated At",
         auto_now=True,
     )
 

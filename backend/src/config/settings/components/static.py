@@ -2,12 +2,8 @@ import os.path
 
 from src.config.settings.components.boilerplate import BASE_DIR
 
-
-# STATIC_DIR = BASE_DIR
-
 STATIC_URL = "static/"
 
-# STATIC_ROOT = os.path.join(STATIC_DIR.parent.parent, "static/")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 print(STATIC_ROOT)

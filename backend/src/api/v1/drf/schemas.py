@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 
+
 class ApiResponse(Response):
     def __init__(self, data=None, meta=None, errors=None, status=None, *args, **kwargs):
         response_data = {
