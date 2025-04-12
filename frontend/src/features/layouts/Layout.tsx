@@ -1,7 +1,8 @@
 import React, { FC, ReactNode } from 'react';
-import Header from './Header';
-import Footer from './Footer';
-import { Container } from '@mui/material';
+import Header from './Header/Header';
+import Footer from './Footer/Footer';
+import { Container, ThemeProvider } from '@mui/material';
+import {theme} from '../../theme/overrides/typography'
 
 interface LayoutInterface {
     children: ReactNode
@@ -10,11 +11,11 @@ interface LayoutInterface {
 const Layout: FC<LayoutInterface> = ({ children }) => {
   return (
     <>
-      <Header />
-      <Container component="main" sx={{ py: 4 }}>
-        {children}
-      </Container>
-      <Footer />
+      <ThemeProvider theme={theme} >
+        <Header />
+          {children}
+        <Footer />
+      </ThemeProvider>
     </>
   );
 };
