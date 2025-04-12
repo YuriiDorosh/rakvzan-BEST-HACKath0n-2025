@@ -13,7 +13,7 @@ from src.api.v1.drf.auth.serializers import (
     Confirm2FASerializer,
     Enable2FASerializer,
 )
-from src.apps.auth.services.qr_code import generate_qr_code_file
+from src.apps.users.services.qr_code import generate_qr_code_file
 from src.apps.common.permissions import IsNot2FA
 
 
