@@ -1,4 +1,5 @@
-from ninja import Query
+from ninja import Query, File
+from ninja.files import UploadedFile
 from ninja.constants import NOT_SET
 from ninja_extra import (
     api_controller,
@@ -8,7 +9,12 @@ from ninja_extra import (
 from typing import List
 from ninja_jwt.authentication import JWTAuth
 from django.http import HttpRequest
-from src.apps.establishments.services.establishments import EstablishmentService, ORMEstablishmentService
+from src.apps.establishments.services.establishments import (
+    EstablishmentService, 
+    ORMEstablishmentService,
+    EstablishmentPhotoService,
+    ORMEstablishmentPhotoService
+)
 from src.api.v1.ninja.establishment.schemas import (
     EstablishmentCreateSchema,
     EstablishmentSimpleSchema,
@@ -31,6 +37,7 @@ class EstablishmentController:
     def __init__(self) -> None:
         super().__init__()
         self.establishment_service: EstablishmentService = ORMEstablishmentService()
+        self.establishment_photo_service: EstablishmentPhotoService = ORMEstablishmentPhotoService()
         
     @route.get(
         "/list", 
@@ -189,15 +196,65 @@ class EstablishmentController:
         establishment_id: int,
     ) -> ApiResponse[StatusOkSchema]:
         
-        establishment = self.establishment_service.delete_establishment(
+        is_establishment_deleted = self.establishment_service.delete_establishment(
             establishment_id=establishment_id,
         )
         
         return ApiResponse(
             data=StatusOkSchema(
-                status=establishment
+                status=is_establishment_deleted
             )
         )
+            
+    @route.post(
+        "/{establishment_id}/photos/upload",
+        response=ApiResponse[EstablishmentSchema],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def upload_establishment_photos(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+        photos: List[UploadedFile] = File(...),
+    ) -> ApiResponse[EstablishmentSchema]:
+                        
+            self.establishment_photo_service.create_photos(
+                establishment_id=establishment_id,
+                photo_files=photos,
+            )
+            
+            establishment = self.establishment_service.get_establishment_by_id(establishment_id)
+            
+            data = EstablishmentSchema.from_entity(establishment)
+            
+            return ApiResponse(
+                data=data,
+            )
+        
+    @route.delete(
+        "/{establishment_id}/photos/{photo_id}",
+        response=ApiResponse[StatusOkSchema],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def delete_establishment_photo(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+        photo_id: int,
+    ) -> ApiResponse[StatusOkSchema]:
+        
+        is_photo_deleted = self.establishment_photo_service.delete_photo(
+            photo_id=photo_id,
+        )
+        
+        return ApiResponse(
+            data=StatusOkSchema(
+                status=is_photo_deleted,
+            )
+        )
+        
         
     # @route.post(
     #     "/{establishment_id}/comments",

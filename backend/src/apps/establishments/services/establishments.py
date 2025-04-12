@@ -1,9 +1,97 @@
 from abc import ABC, abstractmethod
+from django.shortcuts import get_object_or_404
+from django.core.files.uploadedfile import UploadedFile
 from typing import List, Optional
 from django.db.models import Q
 from django.contrib.auth.models import User
-from src.apps.establishments.models.establishments import Establishment as EstablishmentModel
-from src.apps.establishments.entities import EstablishmentEntity, EstablishmentSimpleEntity
+from src.apps.establishments.models.establishments import (
+    Establishment as EstablishmentModel, 
+    EstablishmentPhoto as EstablishmentPhotoModel
+)
+from src.apps.establishments.entities import (
+    EstablishmentEntity, 
+    EstablishmentSimpleEntity, 
+    EstablishmentPhotoEntity
+)
+
+class EstablishmentPhotoService(ABC):
+    """
+    Service for managing establishment photos.
+    """
+
+    @abstractmethod
+    def get_photo_by_id(self, photo_id: int) -> Optional[EstablishmentPhotoEntity]:
+        """
+        Get a photo by its ID.
+        """
+        pass
+
+    @abstractmethod
+    def get_photos_by_establishment_id(self, establishment_id: int) -> List[EstablishmentPhotoEntity]:
+        """
+        Get all photos for a specific establishment.
+        """
+        pass
+
+    @abstractmethod
+    def create_photos(
+        self,
+        establishment_id: int,
+        photo_files: List[UploadedFile]
+    ) -> List[EstablishmentPhotoEntity]:
+        """
+        Create new photos for an establishment from the list of UploadedFile.
+        """
+        pass
+
+    @abstractmethod
+    def delete_photo(self, photo_id: int) -> bool:
+        """
+        Delete a photo by its ID.
+        """
+        pass
+
+
+class ORMEstablishmentPhotoService(EstablishmentPhotoService):
+    """
+    Implementation of EstablishmentPhotoService using Django ORM.
+    """
+
+    def get_photo_by_id(self, photo_id: int) -> Optional[EstablishmentPhotoEntity]:
+        try:
+            photo_obj = EstablishmentPhotoModel.objects.get(pk=photo_id)
+            return photo_obj.to_entity()
+        except EstablishmentPhotoModel.DoesNotExist:
+            return None
+
+    def get_photos_by_establishment_id(self, establishment_id: int) -> List[EstablishmentPhotoEntity]:
+        photos_qs = EstablishmentPhotoModel.objects.filter(establishment_id=establishment_id)
+        return [photo.to_entity() for photo in photos_qs]
+
+    def create_photos(
+        self,
+        establishment_id: int,
+        photo_files: List[UploadedFile]
+    ) -> List[EstablishmentPhotoEntity]:
+        establishment = get_object_or_404(EstablishmentModel, pk=establishment_id)
+
+        created_entities = []
+        for file in photo_files:
+            photo_obj = EstablishmentPhotoModel.objects.create(
+                establishment=establishment,
+                photo=file
+            )
+            created_entities.append(photo_obj.to_entity())
+        return created_entities
+
+    def delete_photo(self, photo_id: int) -> bool:
+        try:
+            photo_obj = EstablishmentPhotoModel.objects.get(pk=photo_id)
+            photo_obj.delete()
+            return True
+        except EstablishmentPhotoModel.DoesNotExist:
+            return False
+
 
 class EstablishmentService(ABC):
     """
@@ -193,7 +281,16 @@ class ORMEstablishmentService(EstablishmentService):
             if latitude is not None and longitude is not None:
                 filters |= Q(latitude=latitude, longitude=longitude)
                 
-            establishments = EstablishmentModel.objects.filter(filters)
+            establishments = EstablishmentModel.objects.filter(
+                filters
+                ).prefetch_related(
+                    "photos",
+                    "comments",
+                    "comments__images",
+                    "comments__likes",
+                ).select_related(
+                    "owner",
+                )
             
             return [establishment.to_simple_entity() for establishment in establishments]
         except ValueError as e:
