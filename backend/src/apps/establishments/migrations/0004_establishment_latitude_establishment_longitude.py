@@ -4,20 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('establishments', '0003_alter_establishment_address_and_more'),
+        ("establishments", "0003_alter_establishment_address_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='establishment',
-            name='latitude',
-            field=models.FloatField(blank=True, help_text='Latitude of the establishment', null=True, verbose_name='Latitude'),
+            model_name="establishment",
+            name="latitude",
+            field=models.FloatField(
+                blank=True,
+                help_text="Latitude of the establishment",
+                null=True,
+                verbose_name="Latitude",
+            ),
         ),
         migrations.AddField(
-            model_name='establishment',
-            name='longitude',
-            field=models.FloatField(blank=True, help_text='Longitude of the establishment', null=True, verbose_name='Longitude'),
+            model_name="establishment",
+            name="longitude",
+            field=models.FloatField(
+                blank=True,
+                help_text="Longitude of the establishment",
+                null=True,
+                verbose_name="Longitude",
+            ),
         ),
     ]

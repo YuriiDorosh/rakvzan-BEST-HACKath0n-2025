@@ -1,2 +1,2 @@
-from .establishments import *
 from .comments import *
+from .establishments import *

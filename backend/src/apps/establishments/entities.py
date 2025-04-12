@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import List, Optional
 
 
 @dataclass
@@ -9,11 +9,13 @@ class CommentLikeEntity:
     user_name: str
     comment_id: int
 
+
 @dataclass
 class CommentImageEntity:
     id: int
     image_url: str
-    
+
+
 @dataclass
 class CommentEntity:
     id: int
@@ -24,10 +26,12 @@ class CommentEntity:
     images: Optional[List[CommentImageEntity]] = None
     likes: Optional[List[CommentLikeEntity]] = None
 
+
 @dataclass
 class EstablishmentPhotoEntity:
     id: int
     photo_url: str
+
 
 @dataclass
 class EstablishmentSimpleEntity:
@@ -39,6 +43,7 @@ class EstablishmentSimpleEntity:
     open_at_on_monday_to_friday: Optional[int] = None
     open_at_on_saturday: Optional[int] = None
     owner_name: Optional[str] = None
+
 
 @dataclass
 class EstablishmentEntity:

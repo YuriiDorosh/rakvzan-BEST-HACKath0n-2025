@@ -1,20 +1,22 @@
+from typing import List, Optional
+
 from pydantic import BaseModel
-from typing import Optional, List
 from src.apps.establishments.entities import (
-    EstablishmentEntity,
-    EstablishmentSimpleEntity,
-    EstablishmentPhotoEntity,
     CommentEntity,
     CommentImageEntity,
     CommentLikeEntity,
-    )
+    EstablishmentEntity,
+    EstablishmentPhotoEntity,
+    EstablishmentSimpleEntity,
+)
+
 
 class CommentLikeSchema(BaseModel):
     id: int
     user_id: int
     user_name: str
     comment_id: int
-    
+
     @staticmethod
     def from_entity(entity: CommentLikeEntity) -> Optional["CommentLikeSchema"]:
         if not entity:
@@ -23,13 +25,14 @@ class CommentLikeSchema(BaseModel):
             id=entity.id,
             user_id=entity.user_id,
             user_name=entity.user_name,
-            comment_id=entity.comment_id
+            comment_id=entity.comment_id,
         )
+
 
 class CommentImageSchema(BaseModel):
     id: int
     image_url: str
-    
+
     @staticmethod
     def from_entity(entity: CommentImageEntity) -> Optional["CommentImageSchema"]:
         if not entity:
@@ -38,7 +41,8 @@ class CommentImageSchema(BaseModel):
             id=entity.id,
             image_url=entity.image_url,
         )
-    
+
+
 class CommentSchema(BaseModel):
     id: int
     establishment_id: int
@@ -47,7 +51,7 @@ class CommentSchema(BaseModel):
     rating: Optional[float] = None
     images: Optional[List[CommentImageEntity]] = None
     likes: Optional[List[CommentLikeEntity]] = None
-    
+
     @staticmethod
     def from_entity(entity: CommentEntity) -> Optional["CommentSchema"]:
         if not entity:
@@ -62,19 +66,23 @@ class CommentSchema(BaseModel):
             likes=entity.likes,
         )
 
+
 class EstablishmentPhotoSchema(BaseModel):
     id: int
     photo_url: str
-    
+
     @staticmethod
-    def from_entity(entity: EstablishmentPhotoEntity) -> Optional["EstablishmentPhotoSchema"]:
+    def from_entity(
+        entity: EstablishmentPhotoEntity,
+    ) -> Optional["EstablishmentPhotoSchema"]:
         if not entity:
             return None
         return EstablishmentPhotoSchema(
             id=entity.id,
             photo_url=entity.photo_url,
         )
-        
+
+
 class EstablishmentSimpleSchema(BaseModel):
     id: int
     name: str
@@ -84,9 +92,11 @@ class EstablishmentSimpleSchema(BaseModel):
     open_at_on_monday_to_friday: Optional[int] = None
     open_at_on_saturday: Optional[int] = None
     owner_name: Optional[str] = None
-    
+
     @staticmethod
-    def from_entity(entity: EstablishmentSimpleEntity) -> Optional["EstablishmentSimpleSchema"]:
+    def from_entity(
+        entity: EstablishmentSimpleEntity,
+    ) -> Optional["EstablishmentSimpleSchema"]:
         if not entity:
             return None
         return EstablishmentSimpleSchema(
@@ -99,6 +109,7 @@ class EstablishmentSimpleSchema(BaseModel):
             open_at_on_saturday=entity.open_at_on_saturday,
             owner_name=entity.owner_name,
         )
+
 
 class EstablishmentSchema(BaseModel):
     id: int
@@ -168,7 +179,8 @@ class EstablishmentSchema(BaseModel):
             photos=entity.photos,
             comments=entity.comments,
         )
-        
+
+
 class EstablishmentCreateSchema(BaseModel):
     name: str
     latitude: float
@@ -217,4 +229,3 @@ class EstablishmentUpdateSchema(BaseModel):
     has_sign_language: Optional[bool] = None
     has_veterans_discounts: Optional[bool] = None
     has_wifi: Optional[bool] = None
-    

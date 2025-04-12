@@ -1,23 +1,14 @@
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
-
 from django_ratelimit.decorators import ratelimit
 from rest_framework import status
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-)
+from rest_framework.generics import CreateAPIView, DestroyAPIView
 from rest_framework.request import Request
-from src.api.v1.drf.schemas import ApiResponse
 from rest_framework.views import APIView
 from src.api.v1.drf.auth.serializers import ConfirmUserSerializer
-from django.contrib.auth import get_user_model
-
-from src.apps.common.permissions import (
-    IsNotAuthenticated,
-    IsNotConfirmed,
-)
-
+from src.api.v1.drf.schemas import ApiResponse
+from src.apps.common.permissions import IsNotAuthenticated, IsNotConfirmed
 
 User = get_user_model()
 
@@ -30,14 +21,13 @@ class DeactivateUserView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            token = User.objects.generate_email_token(request.user)
+            User.objects.generate_email_token(request.user)
             return ApiResponse(status=status.HTTP_200_OK)
 
         return ApiResponse(data={"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeactivateUserConfirmView(APIView):
-
     @method_decorator(ratelimit(key="ip", rate="5/m", method="POST", block=True))
     def get(self, request: Request, token: str):
         try:
@@ -90,7 +80,7 @@ class ResendEmailConfirmationView(APIView):
     @method_decorator(ratelimit(key="ip", rate="5/m", method="POST", block=True))
     def get(self, request: Request):
         try:
-            token = User.objects.generate_email_token(request.user)
+            User.objects.generate_email_token(request.user)
             return ApiResponse(status=status.HTTP_200_OK)
 
         except Exception:
@@ -105,14 +95,13 @@ class DeleteUserView(DestroyAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            token = User.objects.generate_email_token(request.user)
+            User.objects.generate_email_token(request.user)
             return ApiResponse(status=status.HTTP_200_OK)
 
         return ApiResponse(status=status.HTTP_204_NO_CONTENT)
 
 
 class DeleteUserConfirmView(APIView):
-
     @method_decorator(ratelimit(key="ip", rate="5/m", method="POST", block=True))
     def delete(self, request: Request, token: str):
         try:

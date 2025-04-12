@@ -2,7 +2,11 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from src.apps.common.models import TimedAndUnixIdBaseModel
-from src.apps.establishments.entities import EstablishmentEntity, EstablishmentPhotoEntity, EstablishmentSimpleEntity
+from src.apps.establishments.entities import (
+    EstablishmentEntity,
+    EstablishmentPhotoEntity,
+    EstablishmentSimpleEntity,
+)
 
 
 class Establishment(TimedAndUnixIdBaseModel):
@@ -181,15 +185,15 @@ class Establishment(TimedAndUnixIdBaseModel):
         verbose_name=_("Has WiFi"),
         help_text=_("Does the establishment have WiFi?"),
     )
-    
+
     class Meta:
         db_table = "establishments_establishment"
         verbose_name = _("Establishment")
         verbose_name_plural = _("Establishments")
-        
+
     def __str__(self) -> str:
         return f"{self.name}"
-    
+
     def to_entity(self) -> EstablishmentEntity:
         return EstablishmentEntity(
             id=self.id,
@@ -223,20 +227,20 @@ class Establishment(TimedAndUnixIdBaseModel):
             photos=[photo.to_entity() for photo in self.photos.all()],
             comments=[comment.to_entity() for comment in self.comments.all()],
         )
-        
+
     def to_simple_entity(self) -> EstablishmentSimpleEntity:
         return EstablishmentSimpleEntity(
-                id=self.id,
-                latitude=self.latitude,
-                longitude=self.longitude,
-                name=self.name,
-                address=self.address,
-                open_at_on_monday_to_friday=self.open_at_on_monday_to_friday,
-                open_at_on_saturday=self.open_at_on_saturday,
-                owner_name=self.owner.username,
-            )
-    
-    
+            id=self.id,
+            latitude=self.latitude,
+            longitude=self.longitude,
+            name=self.name,
+            address=self.address,
+            open_at_on_monday_to_friday=self.open_at_on_monday_to_friday,
+            open_at_on_saturday=self.open_at_on_saturday,
+            owner_name=self.owner.username,
+        )
+
+
 class EstablishmentPhoto(TimedAndUnixIdBaseModel):
     establishment = models.ForeignKey(
         to=Establishment,
@@ -255,7 +259,7 @@ class EstablishmentPhoto(TimedAndUnixIdBaseModel):
         db_table = "establishments_establishment_photo"
         verbose_name = _("Establishment Photo")
         verbose_name_plural = _("Establishment Photos")
-        
+
     def __str__(self) -> str:
         return f"Photo of {self.establishment.name}"
 

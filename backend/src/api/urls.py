@@ -1,14 +1,12 @@
-from django.urls import include, path
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from django.db import connection
+from django.urls import include, path
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class HealthCheckAPIView(APIView):
-    """
-    Simple healthcheck endpoint to verify server and database status.
-    """
+    """Simple healthcheck endpoint to verify server and database status."""
 
     def get(self, request, *args, **kwargs):
         try:
@@ -25,6 +23,7 @@ class HealthCheckAPIView(APIView):
                 {"status": "error", "database": "disconnected", "error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 urlpatterns = [
     path("v1/healthcheck/", HealthCheckAPIView.as_view(), name="healthcheck"),
