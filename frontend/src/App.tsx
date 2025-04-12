@@ -23,8 +23,7 @@ function App() {
 
   return (
     <Box className="app">
-      <Layout>
-        {/* RouterProvider забезпечує рендеринг поточних маршрутів */}
+      <Layout> 
         <RouterProvider router={router} />
       </Layout>
     </Box>
