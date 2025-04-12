@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import BaseUserManager
 from django.core.cache import cache
 from rest_framework.request import Request
+from random import randint
 
 
 class UserManager(BaseUserManager):
@@ -21,7 +22,7 @@ class UserManager(BaseUserManager):
         return user
 
     def generate_email_token(self, user):
-        token = str(uuid.uuid4())
+        token = ''.join([str(randint(0, 9)) for _ in range(6)])
         cache.set(token, user.id, timeout=1800)
         return token
 

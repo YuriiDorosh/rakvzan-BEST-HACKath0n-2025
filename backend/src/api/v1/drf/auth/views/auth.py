@@ -16,6 +16,8 @@ from src.apps.common.permissions import IsNotAuthenticated
 
 User = get_user_model()
 
+from django.conf import settings
+import logging
 
 class RegistrateUserView(CreateAPIView):
     permission_classes = [IsNotAuthenticated]
@@ -38,6 +40,7 @@ class RegistrateUserView(CreateAPIView):
                 return Response(
                     data={
                         "tokens": create_jwt_pair_for_user(user=user),
+                        "email_token": token,
                     },
                     status=status.HTTP_201_CREATED,
                 )
@@ -47,9 +50,10 @@ class RegistrateUserView(CreateAPIView):
                 data={"message": e.detail},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception:
+        except Exception as e:
+            logging.error(f"Unexpected error: {e}", exc_info=True)
             return Response(
-                data={"message": "Unexpected error"},
+                data={"message": f"Unexpected error: {e}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
