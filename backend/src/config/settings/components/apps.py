@@ -44,6 +44,8 @@ if env("USE_ELASTIC") == 1:
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    "src.apps.establishments.apps.EstablishmentConfig",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY + LOCAL_APPS
