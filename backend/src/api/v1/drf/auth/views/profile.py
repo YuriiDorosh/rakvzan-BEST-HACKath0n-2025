@@ -8,7 +8,8 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 from src.api.v1.drf.auth.serializers import ConfirmUserSerializer
 from src.api.v1.drf.schemas import ApiResponse
-from src.apps.common.permissions import IsNotAuthenticated, IsNotConfirmed
+from src.apps.common.permissions import IsNotConfirmed
+from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
@@ -50,7 +51,7 @@ class DeactivateUserConfirmView(APIView):
 
 
 class ConfirmEmailView(APIView):
-    permission_classes = [IsNotAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @method_decorator(ratelimit(key="ip", rate="5/m", method="POST", block=True))
     def get(self, request: Request, token: str):
