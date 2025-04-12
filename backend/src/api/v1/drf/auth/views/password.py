@@ -1,21 +1,17 @@
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
-
 from django_ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.request import Request
-from src.api.v1.drf.schemas import ApiResponse
 from src.api.v1.drf.auth.serializers import (
     ChangepasswordSerializer,
     ResetPasswordConfirmSerializer,
     ResetPasswordSerializer,
 )
-from django.contrib.auth import get_user_model
-from src.apps.common.permissions import (
-    IsNotAuthenticated,
-)
-
+from src.api.v1.drf.schemas import ApiResponse
+from src.apps.common.permissions import IsNotAuthenticated
 
 User = get_user_model()
 
@@ -46,7 +42,7 @@ class ResetPasswordView(CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             user = User.objects.get(email=serializer.validated_data["email"])
             if user:
-                token = User.objects.generate_email_token(user)
+                User.objects.generate_email_token(user)
                 return ApiResponse(status=status.HTTP_200_OK)
 
         return ApiResponse(data={"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

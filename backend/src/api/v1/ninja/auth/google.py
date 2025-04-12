@@ -1,9 +1,9 @@
-from ninja_extra import api_controller, route, permissions
 from django.conf import settings
-from google.oauth2 import id_token
-from google.auth.transport import requests
-from ninja_jwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from google.auth.transport import requests
+from google.oauth2 import id_token
+from ninja_extra import api_controller, permissions, route
+from ninja_jwt.tokens import RefreshToken
 from src.api.v1.drf.schemas import ApiResponse
 
 User = get_user_model()
@@ -24,21 +24,24 @@ class GoogleAuthController:
 
         try:
             idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.GOOGLE_CLIENT_ID)
-        except ValueError as e:
+        except ValueError:
             return {"error": "Invalid Google token"}, 401
 
-        if idinfo.get('iss') not in ["accounts.google.com", "https://accounts.google.com"]:
+        if idinfo.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
             return {"error": "Invalid issuer"}, 401
-        
-        email = idinfo.get('email')
-        name = idinfo.get('name', "")
+
+        email = idinfo.get("email")
+        idinfo.get("name", "")
         if not email:
             return {"error": "Google token did not provide an email"}, 400
 
-        user, created = User.objects.get_or_create(email=email, defaults={
-            "username": email.split("@")[0],  # or generate unique username from name/email
-            "is_confirmed": True,
-        })
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={
+                "username": email.split("@")[0],  # or generate unique username from name/email
+                "is_confirmed": True,
+            },
+        )
         if created:
             user.is_confirmed = True  # mark email as confirmed via Google
             user.save()
@@ -59,6 +62,6 @@ class GoogleAuthController:
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
-            }
+            },
         }
         return ApiResponse(data=data)

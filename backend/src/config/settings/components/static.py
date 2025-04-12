@@ -2,7 +2,6 @@ import os.path
 
 from src.config.settings.components.boilerplate import BASE_DIR
 
-
 # STATIC_DIR = BASE_DIR
 
 STATIC_URL = "static/"

@@ -1,7 +1,5 @@
-from django.urls import path
-
 import src.api.v1.drf.auth.views as views
-import os
+from django.urls import path
 
 urlpatterns = [
     # User password
@@ -19,10 +17,7 @@ urlpatterns = [
         views.DeleteUserConfirmView.as_view(),
         name="delete-account-confirm",
     ),
-
-
     # Deactivate account
-    
     path(
         "deactivate-account/",
         views.DeactivateUserView.as_view(),
@@ -49,4 +44,3 @@ urlpatterns = [
     path("2fa/confirm", views.Confirm2FAView.as_view(), name="confirm-2fa"),
     path("qr_codes/<str:filename>/", views.serve_qr_code, name="qr-codes"),
 ]
-

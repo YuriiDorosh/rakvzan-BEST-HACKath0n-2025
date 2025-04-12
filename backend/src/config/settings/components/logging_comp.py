@@ -1,14 +1,16 @@
 import os
-from src.config.settings.components.boilerplate import BASE_DIR
-import environ
 
+import environ
+from src.config.settings.components.boilerplate import BASE_DIR
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env')
+environ.Env.read_env(BASE_DIR / ".env")
+
 
 LOGGING_DIR_DJANGO = BASE_DIR.parent / "logs" / "django"
 if not LOGGING_DIR_DJANGO.exists():
     LOGGING_DIR_DJANGO.mkdir(parents=True, exist_ok=True)
+
 
 LOGGING = {
     "version": 1,
@@ -16,12 +18,9 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "[%(asctime)s] [%(levelname)s] [%(process)d] [%(threadName)s] [%(name)s:%(lineno)d] %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S"
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         },
-        "simple": {
-            "format": "[%(asctime)s] %(levelname)s %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S"
-        },
+        "simple": {"format": "[%(asctime)s] %(levelname)s %(message)s", "datefmt": "%Y-%m-%d %H:%M:%S"},
     },
     "handlers": {
         "console": {
@@ -58,10 +57,10 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
-        'src.apps.common.middlewares': {
-            'handlers': ['console', 'debug_file'],
-            'level': 'DEBUG',
-            'propagate': False,
+        "src.apps.common.middlewares": {
+            "handlers": ["console", "debug_file"],
+            "level": "DEBUG",
+            "propagate": False,
         },
     },
     "root": {
@@ -70,16 +69,9 @@ LOGGING = {
     },
 }
 
-if env('USE_ELASTIC') == 1:
-    LOGGING['loggers']['elasticapm'] = {
-        'level': 'DEBUG',
-        'handlers': ['console'],
-        'propagate': False,
+if env("USE_ELASTIC") == 1:
+    LOGGING["loggers"]["elasticapm"] = {
+        "level": "DEBUG",
+        "handlers": ["console"],
+        "propagate": False,
     }
-        
-        
-        # 'elasticapm': {
-        #     'level': 'DEBUG',
-        #     'handlers': ['console'],
-        #     'propagate': False,
-        # },
