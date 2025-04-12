@@ -1,3 +1,5 @@
+import os
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -12,3 +14,5 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")

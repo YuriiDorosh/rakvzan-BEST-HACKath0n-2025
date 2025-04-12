@@ -13,7 +13,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'src.apps.common.middlewares.DBLoggingMiddleware',
+#    'src.apps.common.middlewares.DBLoggingMiddleware',
 ]
 
 
