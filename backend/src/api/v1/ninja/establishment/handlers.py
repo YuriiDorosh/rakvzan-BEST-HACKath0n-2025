@@ -12,10 +12,18 @@ from src.api.v1.ninja.establishment.schemas import (
     EstablishmentSchema,
     EstablishmentSimpleSchema,
     EstablishmentUpdateSchema,
+    CommentSchema,
+    CommentLikeSchema,
+    CommentImageSchema,
+    CommentCreateSchema,
 )
 from src.apps.establishments.services.establishments import (
     EstablishmentPhotoService, EstablishmentService,
     ORMEstablishmentPhotoService, ORMEstablishmentService,
+)
+from src.apps.establishments.services.comments import(
+    CommentService,
+    ORMCommentService,
 )
 
 
@@ -29,6 +37,7 @@ class EstablishmentController:
         super().__init__()
         self.establishment_service: EstablishmentService = ORMEstablishmentService()
         self.establishment_photo_service: EstablishmentPhotoService = ORMEstablishmentPhotoService()
+        self.establishment_comment_service: CommentService = ORMCommentService()
 
     @route.get(
         "/list",
@@ -232,4 +241,179 @@ class EstablishmentController:
             data=StatusOkSchema(
                 status=is_photo_deleted,
             ),
+        )
+    
+    @route.get(
+        "/{establishment_id}/comments",
+        response=ApiResponse[List[CommentSchema]],
+        auth=NOT_SET,
+        permissions=[permissions.AllowAny],
+    )
+    def get_comments(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+    ) -> ApiResponse[List[CommentSchema]]:
+        comments = self.establishment_comment_service.get_comments(
+            establishment_id=establishment_id,
+        )
+
+        data = [CommentSchema.from_entity(comment) for comment in comments]
+
+        return ApiResponse(
+            data=data,
+        )
+        
+    @route.post(
+        "/{establishment_id}/comments/like",
+        response=ApiResponse[CommentLikeSchema],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def like_comment(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+        comment_id: int,
+    ) -> ApiResponse[CommentLikeSchema]:
+        user = request.user
+
+        comment_like = self.establishment_comment_service.like_comment(
+            establishment_id=establishment_id,
+            comment_id=comment_id,
+            user=user,
+        )
+
+        data = CommentLikeSchema.from_entity(comment_like)
+
+        return ApiResponse(
+            data=data,
+        )
+        
+    @route.delete(
+        "/{establishment_id}/comments/like",
+        response=ApiResponse[StatusOkSchema],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def unlike_comment(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+        comment_id: int,
+    ) -> ApiResponse[StatusOkSchema]:
+        user = request.user
+
+        self.establishment_comment_service.unlike_comment(
+            establishment_id=establishment_id,
+            comment_id=comment_id,
+            user=user,
+        )
+
+        return ApiResponse(
+            data=StatusOkSchema(status=True),
+        )
+
+    @route.post(
+        "/{establishment_id}/comments",
+        response=ApiResponse[CommentSchema],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def create_comment(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+        payload: CommentCreateSchema,
+        images: List[UploadedFile] = File(...),
+    ) -> ApiResponse[CommentSchema]:
+        user = request.user
+
+        comment = self.establishment_comment_service.create_comment(
+            establishment_id=establishment_id,
+            user=user,
+            comment=payload.comment,
+            rating=payload.rating,
+            images=images,
+        )
+
+        data = CommentSchema.from_entity(comment)
+
+        return ApiResponse(
+            data=data,
+        )
+        
+    @route.delete(
+        "/{establishment_id}/comments/{comment_id}",
+        response=ApiResponse[StatusOkSchema],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def delete_comment(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+        comment_id: int,
+    ) -> ApiResponse[StatusOkSchema]:
+        user = request.user
+
+        self.establishment_comment_service.delete_comment(
+            comment_id=comment_id,
+            user=user,
+        )
+
+        return ApiResponse(
+            data=StatusOkSchema(status=True),
+        )
+        
+    @route.delete(
+        "/{establishment_id}/comments/{comment_id}/images/{image_id}",
+        response=ApiResponse[StatusOkSchema],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def delete_comment_image(
+        self,
+        request: HttpRequest,
+        establishment_id: int,
+        comment_id: int,
+        image_id: int,
+    ) -> ApiResponse[StatusOkSchema]:
+        self.establishment_comment_service.delete_comment_image(
+            comment_id=comment_id,
+            image_id=image_id,
+        )
+
+        return ApiResponse(
+            data=StatusOkSchema(status=True),
+        )
+        
+    @route.get(
+        "/comments",
+        response=ApiResponse[List[CommentSchema]],
+        auth=JWTAuth(),
+        permissions=[permissions.IsAuthenticated],
+    )
+    def get_omments(
+        self,
+        request: HttpRequest,
+        by_me: bool = Query(False),
+        establishment_id: int = Query(None),
+        user_id: int = Query(None),
+    ) -> ApiResponse[List[CommentSchema]]:
+        if by_me:
+            user = request.user
+            comments = self.establishment_comment_service.get_comments(
+                user_id=user.id,
+            )
+        else:
+            comments = self.establishment_comment_service.get_comments(
+                establishment_id=establishment_id,
+                user_id=user_id,
+            )
+        
+        data = [CommentSchema.from_entity(comment) for comment in comments]
+        
+        return ApiResponse(
+            data=data,
         )
