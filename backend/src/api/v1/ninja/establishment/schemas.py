@@ -1,4 +1,5 @@
 from typing import List, Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 from src.apps.establishments.entities import (
@@ -13,7 +14,7 @@ from src.apps.establishments.entities import (
 
 class CommentLikeSchema(BaseModel):
     id: int
-    user_id: int
+    user_id: UUID
     user_name: str
     comment_id: int
 
@@ -46,7 +47,7 @@ class CommentImageSchema(BaseModel):
 class CommentSchema(BaseModel):
     id: int
     establishment_id: int
-    user_id: int
+    user_id: UUID
     user_name: str
     comment: str
     rating: Optional[float] = None

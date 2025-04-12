@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from typing import List, Optional
+from uuid import UUID
 
 
 @dataclass
 class CommentLikeEntity:
     id: int
-    user_id: int
+    user_id: UUID
     user_name: str
     comment_id: int
 
@@ -20,7 +21,7 @@ class CommentImageEntity:
 class CommentEntity:
     id: int
     establishment_id: int
-    user_id: int
+    user_id: UUID
     user_name: str
     comment: str
     rating: Optional[float] = None

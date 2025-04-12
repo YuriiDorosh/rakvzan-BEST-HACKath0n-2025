@@ -249,7 +249,7 @@ class EstablishmentController:
         auth=NOT_SET,
         permissions=[permissions.AllowAny],
     )
-    def get_comments(
+    def get_establishment_comments(
         self,
         request: HttpRequest,
         establishment_id: int,
@@ -279,7 +279,6 @@ class EstablishmentController:
         user = request.user
 
         comment_like = self.establishment_comment_service.like_comment(
-            establishment_id=establishment_id,
             comment_id=comment_id,
             user=user,
         )
@@ -305,7 +304,6 @@ class EstablishmentController:
         user = request.user
 
         self.establishment_comment_service.unlike_comment(
-            establishment_id=establishment_id,
             comment_id=comment_id,
             user=user,
         )
@@ -389,12 +387,12 @@ class EstablishmentController:
         )
         
     @route.get(
-        "/comments",
+        "/comments/list",
         response=ApiResponse[List[CommentSchema]],
         auth=JWTAuth(),
         permissions=[permissions.IsAuthenticated],
     )
-    def get_omments(
+    def get_comments(
         self,
         request: HttpRequest,
         by_me: bool = Query(False),
@@ -402,15 +400,14 @@ class EstablishmentController:
         user_id: int = Query(None),
     ) -> ApiResponse[List[CommentSchema]]:
         if by_me:
-            user = request.user
-            comments = self.establishment_comment_service.get_comments(
-                user_id=user.id,
-            )
+            user_id = request.user.id
         else:
-            comments = self.establishment_comment_service.get_comments(
-                establishment_id=establishment_id,
-                user_id=user_id,
-            )
+            user_id = None
+            
+        comments = self.establishment_comment_service.get_comments(
+            establishment_id=establishment_id,
+            user_id=user_id,
+        )
         
         data = [CommentSchema.from_entity(comment) for comment in comments]
         

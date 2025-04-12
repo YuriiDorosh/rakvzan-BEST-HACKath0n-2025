@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
+from uuid import UUID
 
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import UploadedFile
@@ -21,7 +22,7 @@ class CommentService(ABC):
     def get_comments(
         self, 
         establishment_id: Optional[int] = None, 
-        user_id: Optional[int] = None,
+        user_id: Optional[UUID] = None,
     ) -> List[CommentEntity]:
         """Get comments for an establishment"""
         pass
@@ -72,14 +73,18 @@ class CommentService(ABC):
 
 class ORMCommentService(CommentService):
     def get_comments(
+        self,
         establishment_id: Optional[int] = None, 
-        user_id: Optional[int] = None,
+        user_id: Optional[UUID] = None,
     ) -> List[CommentEntity]:
         """Get comments for an establishment"""
-        if establishment_id:
+
+        if establishment_id is not None:
             comments = CommentModel.objects.filter(establishment_id=establishment_id)
-        if user_id:
+        if user_id is not None and establishment_id is not None:
             comments = comments.filter(user_id=user_id)
+        elif user_id is not None:
+            comments = CommentModel.objects.filter(user_id=user_id)
         if not establishment_id and not user_id:
             comments = CommentModel.objects.all()
         return [comment.to_entity() for comment in comments]
