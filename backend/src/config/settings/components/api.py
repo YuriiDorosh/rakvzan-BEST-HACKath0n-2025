@@ -45,3 +45,8 @@ SIMPLE_JWT = {
 }
 
 APP_NAME = "rakvzan"
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+ALLOWED_HOSTS = ['*']
+CORS_ALLOWED_ORIGIN = ['http://localhost:81']

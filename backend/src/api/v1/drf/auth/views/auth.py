@@ -13,6 +13,10 @@ from src.api.v1.drf.auth.serializers import (
 from src.apps.common.permissions import IsNotAuthenticated
 from src.apps.users.services.emails import send_email
 from src.apps.users.services.tokens import create_jwt_pair_for_user
+from django.conf import settings
+from google.auth.transport import requests
+from google.oauth2 import id_token
+
 
 User = get_user_model()
 
@@ -68,3 +72,38 @@ class UserLoginView(CreateAPIView):
             return Response(data=create_jwt_pair_for_user(user), status=status.HTTP_200_OK)
 
         return Response(data={"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GoogleLoginView(CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        token = request.data.get("id_token")
+        if not token:
+            return Response({"error": "Missing Google ID token"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.GOOGLE_CLIENT_ID)
+        except ValueError:
+            return Response({"error": "Invalid Google token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if idinfo.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
+            return Response({"error": "Invalid issuer"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        email = idinfo.get("email")
+        if not email:
+            return Response({"error": "Google token did not provide an email"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={
+                "username": email.split("@")[0],
+                "is_confirmed": True,
+            },
+        )
+
+        if not user.is_confirmed:
+            user.is_confirmed = True
+            user.save()
+
+        tokens = create_jwt_pair_for_user(user)
+
+        return Response(tokens, status=status.HTTP_200_OK)

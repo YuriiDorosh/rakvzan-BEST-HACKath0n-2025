@@ -17,6 +17,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY = [
+    "corsheaders",
     # DCRF
     "channels",
     # DRF
@@ -33,6 +34,7 @@ THIRD_PARTY = [
     # "totp",
     "django_otp",
     "django_otp.plugins.otp_totp",
+    #CORS
 ]
 
 if env("USE_ELASTIC") == 1:
