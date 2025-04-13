@@ -1,8 +1,35 @@
 from rest_framework import serializers
-from src.apps.establishments.models import Comment
+from src.apps.establishments.models import Comment, Establishment
+
+
+class EstablishmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Establishment
+        fields = [
+            "id",
+            "name",
+            "description",
+            "address",
+            "latitude",
+            "longitude",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "name",
+            "description",
+            "address",
+            "latitude",
+            "longitude",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    establishment = EstablishmentSerializer(read_only=True)
+
     class Meta:
         model = Comment
         fields = [
@@ -14,6 +41,8 @@ class CommentSerializer(serializers.ModelSerializer):
             "likes",
             "created_at",
             "updated_at",
+            "establishment",
+
         ]
         read_only_fields = [
             "id",
@@ -24,4 +53,5 @@ class CommentSerializer(serializers.ModelSerializer):
             "likes",
             "created_at",
             "updated_at",
+            "establishment",
         ]
