@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
 from uuid import UUID
+from datetime import datetime
 
 
 @dataclass
@@ -27,6 +28,8 @@ class CommentEntity:
     rating: Optional[float] = None
     images: Optional[List[CommentImageEntity]] = None
     likes: Optional[List[CommentLikeEntity]] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @dataclass
