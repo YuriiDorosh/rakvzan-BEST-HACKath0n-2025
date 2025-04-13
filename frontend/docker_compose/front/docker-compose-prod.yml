@@ -2,7 +2,7 @@ services:
   front-prod:
     build:
       context: ../..
-      dockerfile: docker_compose/front/Dockerfile-prod
+      dockerfile: docker_compose/front/Dockerfile
     working_dir: /app
     volumes:
       - ../../:/app
