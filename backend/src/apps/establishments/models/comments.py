@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from src.apps.common.models import TimedAndUnixIdBaseModel
 from src.apps.establishments.entities import (
     CommentEntity,
     CommentImageEntity,
@@ -10,7 +11,7 @@ from src.apps.establishments.entities import (
 User = get_user_model()
 
 
-class Comment(models.Model):
+class Comment(TimedAndUnixIdBaseModel):
     establishment = models.ForeignKey(
         to="Establishment",
         verbose_name=_("Establishment"),
@@ -57,7 +58,7 @@ class Comment(models.Model):
         )
 
 
-class CommentImage(models.Model):
+class CommentImage(TimedAndUnixIdBaseModel):
     comment = models.ForeignKey(
         to=Comment,
         verbose_name=_("Comment"),
@@ -86,7 +87,7 @@ class CommentImage(models.Model):
         )
 
 
-class CommentLike(models.Model):
+class CommentLike(TimedAndUnixIdBaseModel):
     comment = models.ForeignKey(
         to=Comment,
         verbose_name=_("Comment"),
