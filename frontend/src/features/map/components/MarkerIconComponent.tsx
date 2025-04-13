@@ -37,7 +37,7 @@ const MarkerIconComponent: FC<MarkerIconComponentInterface> = ({ id, setEndPosit
                         width: '200px',
                         height: '200px'
                     }}
-                    src={`http://localhost${data?.data?.photos[0]?.photo_url}`} 
+                    src={`https://api.rakvzan.space/${data?.data?.photos[0]?.photo_url}`} 
                 />
             </Grid>
             <Grid 

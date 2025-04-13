@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'http://localhost/api/v1/ninja/',
+    baseUrl: `https://api.rakvzan.space/api/v1/ninja/`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access');
       if (token) {

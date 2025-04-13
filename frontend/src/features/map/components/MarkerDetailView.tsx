@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux";
 import { RootState } from "../../../app/baseStore";
 import CreateComentModal from "./CreateComentModal";
-import Comment from './Comment'
+import Comment from './Comment';
 
 const MarkerDetailView = () => {
 
@@ -44,7 +44,7 @@ const MarkerDetailView = () => {
                 />
                 {detailMarker?.photos?.length > 0 &&
                     <img 
-                        src={`http://localhost${detailMarker?.photos[0]?.photo_url}`} 
+                        src={`https://api.rakvzan.space/${detailMarker?.photos[0]?.photo_url}`} 
                     style={{
                         width: '100%',
                         height: 'auto'
