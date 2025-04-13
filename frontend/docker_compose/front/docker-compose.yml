@@ -9,12 +9,14 @@ services:
       - /app/node_modules 
     environment:
       - NODE_ENV=${NODE_ENV}
-      - HOST=0.0.0.0
+      - API_HOST=${API_HOST}
     # ports:
     #   - "${REACT_PORT}:${REACT_PORT}"
     command: npm start
     stdin_open: true
     tty: true
+    networks:
+      - backend
 
 
   nginx:
@@ -27,3 +29,9 @@ services:
       - front
     links:
       - front
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true

@@ -1,26 +1,26 @@
 .PHONY: build up down restart restart-no-cache logs clean
 
 SERVICE_NAME = react-app
-ENV_PATH = docker_compose/front/env/.env
+ENV_PATH = --env-file .env
 COMPOSE_FILE = docker_compose/front/docker-compose.yml
 
 build:
-	docker compose --env-file $(ENV_PATH) -f $(COMPOSE_FILE) build
+	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) build
 
 up:
-	docker compose --env-file $(ENV_PATH) -f $(COMPOSE_FILE) up -d
+	docker compose -f $(COMPOSE_FILE) $(ENV_PATH) up -d
 
 down:
-	docker compose --env-file $(ENV_PATH) -f $(COMPOSE_FILE) down
+	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) down
 
 restart: 
-	docker compose --env-file $(ENV_PATH) -f $(COMPOSE_FILE) down
-	docker compose --env-file $(ENV_PATH) -f $(COMPOSE_FILE) up -d
+	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) down
+	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) up -d
 	@echo "Service $(SERVICE_NAME) restarted."
 
 restart-no-cache: down
-	docker compose --env-file $(ENV_PATH) -f $(COMPOSE_FILE) build --no-cache
-	docker compose --env-file $(ENV_PATH) -f $(COMPOSE_FILE) up -d
+	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) build --no-cache
+	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) up -d
 	@echo "Service $(SERVICE_NAME) restarted without cache."
 
 logs:
