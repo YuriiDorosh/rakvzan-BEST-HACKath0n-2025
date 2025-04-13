@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+
+  fastapi-prod:
+    build:
+      context: ../..
+      dockerfile: docker_compose/fastapi/Dockerfile
+    volumes:
+      - ../../fastapi:/app/fastapi
+    restart: unless-stopped
+    command: 'sh -c "python fastapi/main.py --host 0.0.0.0 --port 8001"'
+    container_name: fastapi-prod
+    networks:
+      - backend-prod
+
+networks:
+  backend-prod:
+    external: true
