@@ -17,6 +17,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.2",
     "@types/react-router-dom": "^5.3.3",
+    "formik": "^2.4.6",
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "react": "^19.1.0",

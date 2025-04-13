@@ -1,8 +1,14 @@
 import { Box, Button } from "@mui/material";
 import { FC, ReactNode } from "react";
-import {ReactComponent as LogoImage} from './images/logo.svg'
+import {ReactComponent as LogoImage} from '../../../app/assets/images/logo.svg'
+import { useDispatch } from "react-redux";
+import { changeOpenState } from "../../../app/store/authMenuSlice";
+import LoginPage from "../../auth/loginPage/LoginPage";
 
 const Header = () => {
+
+    const dispatch = useDispatch()
+    
     return (
         <Box
             sx={{
@@ -11,6 +17,7 @@ const Header = () => {
                 padding: '19px 42px'
             }}
         >
+            <LoginPage/>
             <Box>
                 <LogoImage
                     style={{
@@ -25,6 +32,9 @@ const Header = () => {
                         height: '36px'
                     }}
                     variant="contained"
+                    onClick={()=>{
+                        dispatch(changeOpenState(true))
+                    }}
                 >
                     Увійти
                 </Button>

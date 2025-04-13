@@ -1,3 +1,4 @@
+import ContactPage from "../features/contact/ContactPage";
 import MainPage from "../features/mainPage/MainPage";
 import MapPage from "../features/map/MapPage";
 import FirstMockPage from "../features/pages/mock/FirstMockPage";
@@ -11,5 +12,9 @@ export const routes: RouterType[] = [
     {
         path: '/map',
         element: <MapPage/>
+    },
+    {
+        path: '/contact',
+        element: <ContactPage/>
     },
 ]
