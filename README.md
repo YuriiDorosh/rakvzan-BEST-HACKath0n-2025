@@ -1,5 +1,11 @@
-## Getting Started
+<img src="docs/image.png">
 
+<strong>InclusiveMap</strong> is a  full-stack web application designed to help users quickly locate accessible spaces in urban environments.
+on backend it is using microservices architecture with modern AI solutins to validate esteblishments with their access level  using modern frameworks as Django Rest Framework, Django Ninja and FastAPI to handle frontend communication. While fronend side is based on Material-UI.
+
+
+
+## Getting Started
 First, run the backend server:
 
 ```bash
