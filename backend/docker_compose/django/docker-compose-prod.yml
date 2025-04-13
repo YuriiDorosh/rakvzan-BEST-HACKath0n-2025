@@ -32,132 +32,132 @@ services:
       retries: 5
       start_period: 30s
 
-  celery_worker_1-prod:
-    build:
-      context: ../.. 
-      dockerfile: docker_compose/worker_1/Dockerfile
-    container_name: celery_worker_1-prod
-    restart: unless-stopped
-    volumes:
-      - ../../src:/app/src 
-      - ../../.env:/app/.env
-    env_file:
-      - ../../.env
-    depends_on:
-      - redis-prod
-    networks:
-      - backend-prod
-    environment:
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+  # celery_worker_1-prod:
+  #   build:
+  #     context: ../.. 
+  #     dockerfile: docker_compose/worker_1/Dockerfile
+  #   container_name: celery_worker_1-prod
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ../../src:/app/src 
+  #     - ../../.env:/app/.env
+  #   env_file:
+  #     - ../../.env
+  #   depends_on:
+  #     - redis-prod
+  #   networks:
+  #     - backend-prod
+  #   environment:
+  #     DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  #     POSTGRES_HOST: ${POSTGRES_HOST}
+  #     POSTGRES_PORT: ${POSTGRES_PORT}
+  #     CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+  #     CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
 
-  celery_worker_2-prod:
-    build:
-      context: ../.. 
-      dockerfile: docker_compose/worker_2/Dockerfile
-    container_name: celery_worker_2-prod
-    restart: unless-stopped
-    volumes:
-      - ../../src:/app/src 
-      - ../../.env:/app/.env
-    env_file:
-      - ../../.env
-    depends_on:
-      - redis-prod
-    networks:
-      - backend-prod
-    environment:
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+  # celery_worker_2-prod:
+  #   build:
+  #     context: ../.. 
+  #     dockerfile: docker_compose/worker_2/Dockerfile
+  #   container_name: celery_worker_2-prod
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ../../src:/app/src 
+  #     - ../../.env:/app/.env
+  #   env_file:
+  #     - ../../.env
+  #   depends_on:
+  #     - redis-prod
+  #   networks:
+  #     - backend-prod
+  #   environment:
+  #     DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  #     POSTGRES_HOST: ${POSTGRES_HOST}
+  #     POSTGRES_PORT: ${POSTGRES_PORT}
+  #     CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+  #     CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
 
-  celery_worker_3-prod:
-    build:
-      context: ../.. 
-      dockerfile: docker_compose/worker_3/Dockerfile
-    container_name: celery_worker_3-prod
-    restart: unless-stopped
-    volumes:
-      - ../../src:/app/src 
-      - ../../.env:/app/.env
-    env_file:
-      - ../../.env
-    depends_on:
-      - redis-prod
-    networks:
-      - backend-prod
-    environment:
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+  # celery_worker_3-prod:
+  #   build:
+  #     context: ../.. 
+  #     dockerfile: docker_compose/worker_3/Dockerfile
+  #   container_name: celery_worker_3-prod
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ../../src:/app/src 
+  #     - ../../.env:/app/.env
+  #   env_file:
+  #     - ../../.env
+  #   depends_on:
+  #     - redis-prod
+  #   networks:
+  #     - backend-prod
+  #   environment:
+  #     DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  #     POSTGRES_HOST: ${POSTGRES_HOST}
+  #     POSTGRES_PORT: ${POSTGRES_PORT}
+  #     CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+  #     CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
 
-  celery_worker_4-prod:
-    build:
-      context: ../.. 
-      dockerfile: docker_compose/worker_4/Dockerfile
-    container_name: celery_worker_4-prod
-    restart: unless-stopped
-    volumes:
-      - ../../src:/app/src 
-      - ../../.env:/app/.env
-    env_file:
-      - ../../.env
-    depends_on:
-      - redis-prod
-    networks:
-      - backend-prod
-    environment:
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+  # celery_worker_4-prod:
+  #   build:
+  #     context: ../.. 
+  #     dockerfile: docker_compose/worker_4/Dockerfile
+  #   container_name: celery_worker_4-prod
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ../../src:/app/src 
+  #     - ../../.env:/app/.env
+  #   env_file:
+  #     - ../../.env
+  #   depends_on:
+  #     - redis-prod
+  #   networks:
+  #     - backend-prod
+  #   environment:
+  #     DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  #     POSTGRES_HOST: ${POSTGRES_HOST}
+  #     POSTGRES_PORT: ${POSTGRES_PORT}
+  #     CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+  #     CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
 
-  celery_beat-prod:
-    build:
-      context: ../.. 
-      dockerfile: docker_compose/beat/Dockerfile
-    container_name: celery_beat-prod
-    restart: unless-stopped
-    volumes:
-      - ../../src:/app/src 
-      - ../../.env:/app/.env
-    env_file:
-      - ../../.env
-    depends_on:
-      - redis-prod
-    networks:
-      - backend-prod
+  # celery_beat-prod:
+  #   build:
+  #     context: ../.. 
+  #     dockerfile: docker_compose/beat/Dockerfile
+  #   container_name: celery_beat-prod
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ../../src:/app/src 
+  #     - ../../.env:/app/.env
+  #   env_file:
+  #     - ../../.env
+  #   depends_on:
+  #     - redis-prod
+  #   networks:
+  #     - backend-prod
 
-  flower-prod:
-    build: 
-      context: ../..
-      dockerfile: docker_compose/flower/Dockerfile
-    container_name: flower-prod
-    restart: unless-stopped
-    volumes:
-      - ../../src:/app/src 
-      - ../../.env:/app/.env
-    ports:
-      - "5555:5555"
-    depends_on:
-      - django-prod
-      - redis-prod
-      - celery_worker_1-prod
-      - celery_worker_2-prod
-    env_file:
-      - ../../.env
-    networks:
-      - backend-prod
-    environment:
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+  # flower-prod:
+  #   build: 
+  #     context: ../..
+  #     dockerfile: docker_compose/flower/Dockerfile
+  #   container_name: flower-prod
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ../../src:/app/src 
+  #     - ../../.env:/app/.env
+  #   ports:
+  #     - "5555:5555"
+  #   depends_on:
+  #     - django-prod
+  #     - redis-prod
+  #     - celery_worker_1-prod
+  #     - celery_worker_2-prod
+  #   env_file:
+  #     - ../../.env
+  #   networks:
+  #     - backend-prod
+  #   environment:
+  #     CELERY_BROKER_URL: ${CELERY_BROKER_URL}
 
   redis-prod:
     image: redis:latest

@@ -100,15 +100,11 @@ up-all-no-cache-without-monitoring: check-network
 up-all-no-cache-without-monitoring-prod: check-network-prod
 	$(MAKE) up-db-no-cache-prod
 	$(MAKE) up-django-no-cache-prod
-	$(MAKE) up-pgadmin-prod
-	$(MAKE) up-adminer-prod
 	$(MAKE) up-fastapi-prod
 
 down-all-without-monitoring:
 	$(MAKE) down-db
 	$(MAKE) down-django
-	$(MAKE) down-pgadmin
-	$(MAKE) down-adminer
 	$(MAKE) down-fastapi
 
 down-all-without-monitoring-prod:

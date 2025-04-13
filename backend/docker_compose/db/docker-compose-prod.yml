@@ -18,22 +18,22 @@ services:
     ports:
       - "5432:5432"
 
-  backup-prod:
-    image: postgres:15
-    container_name: postgres_backup-prod
-    restart: unless-stopped
-    env_file:
-      - ../../.env
-    environment:
-      PGPASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - ./backups:/backups
-      - ./backup-prod.sh:/backup.sh
-    networks:
-      - backend-prod
-    depends_on:
-      - postgres-prod
-    command: sh -c "while true; do /backup.sh; sleep 86400; done"
+  # backup-prod:
+  #   image: postgres:15
+  #   container_name: postgres_backup-prod
+  #   restart: unless-stopped
+  #   env_file:
+  #     - ../../.env
+  #   environment:
+  #     PGPASSWORD: ${POSTGRES_PASSWORD}
+  #   volumes:
+  #     - ./backups:/backups
+  #     - ./backup-prod.sh:/backup.sh
+  #   networks:
+  #     - backend-prod
+  #   depends_on:
+  #     - postgres-prod
+  #   command: sh -c "while true; do /backup.sh; sleep 86400; done"
 
 volumes:
   postgres_data:
