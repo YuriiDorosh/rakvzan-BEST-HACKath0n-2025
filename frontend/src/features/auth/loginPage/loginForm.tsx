@@ -2,27 +2,39 @@ import { Box, Button, FormControl, Input, InputAdornment, InputLabel, TextField,
 import { Formik } from "formik";
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useLoginMutation } from "../authApi";
+import { changeOpenState } from "../../../app/store/authMenuSlice";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () =>{
+    const [triggerLogin] = useLoginMutation()
+    const dispatch = useDispatch()
     return (
         <Formik
             initialValues={{ email: '', password: '' }}
             validate={values => {
-                const errors = {email: ''};
-                if (!values.email) {
-                errors.email = 'Required';
-                } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                ) {
-                errors.email = 'Invalid email address';
-                }
-                return errors;
+                // const errors = {email: ''};
+                // if (!values.email) {
+                // errors.email = 'Required';
+                // } else if (
+                // !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                // ) {
+                // errors.email = 'Invalid email address';
+                // }
+                // return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                    setSubmitting(false);
-                }, 400);
+                triggerLogin({
+                    username: values.email,
+                    password: values.password
+                }).then((res) => {
+                    if (res?.data?.username){
+                        localStorage.setItem('username', res?.data?.username)
+                        localStorage.setItem('access', res?.data?.access)
+                        localStorage.setItem('refresh', res?.data?.refresh)
+                        window.location.reload()
+                    }
+                })
             }}
         >
        {({
@@ -43,6 +55,8 @@ const LoginForm = () =>{
            <TextField
                 placeholder="example@gmail.com"
                 id="input-with-icon-textfield"
+                name="email"
+                onChange={handleChange}
                 label=""
                 sx={{
                     width: '100%'
@@ -69,6 +83,8 @@ const LoginForm = () =>{
                 placeholder="*******"
                 id="input-with-icon-textfield"
                 type="password"
+                name="password"
+                onChange={handleChange}
                 label=""
                 sx={{
                     width: '100%'

@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 const baseQuery = fetchBaseQuery({
     baseUrl: 'http://localhost/api/v1/ninja/',
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access');
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -15,7 +15,7 @@ const baseQuery = fetchBaseQuery({
     let result = await baseQuery(args, api, extraOptions);
 
     if (result.error && result.error.status === 401) {
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refreshToken = localStorage.getItem('refresh');
       if (refreshToken) {
         const refreshResult = await baseQuery(
           {
@@ -28,16 +28,16 @@ const baseQuery = fetchBaseQuery({
         );
         if (refreshResult.data) {
             //@ts-ignore
-          localStorage.setItem('token', refreshResult.data.token);
+          localStorage.setItem('access', refreshResult.data.token);
           //@ts-ignore
           if (refreshResult.data.refreshToken) {
             //@ts-ignore
-            localStorage.setItem('refreshToken', refreshResult.data.refreshToken);
+            localStorage.setItem('refresh', refreshResult.data.refreshToken);
           }
           result = await baseQuery(args, api, extraOptions);
         } else {
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('access');
+          localStorage.removeItem('refresh');
         }
       }
     }
@@ -50,10 +50,13 @@ const baseQuery = fetchBaseQuery({
     endpoints: (builder) => ({
       login: builder.mutation({
         query: (credentials) => ({
-          url: 'token/login',
+          url: 'token/pair',
           method: 'POST',
           body: credentials,
         }),
       }),
     }),
   });
+
+  export const { useLoginMutation } = baseApi
+  
