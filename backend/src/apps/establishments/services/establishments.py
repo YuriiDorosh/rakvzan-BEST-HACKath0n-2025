@@ -14,6 +14,7 @@ from src.apps.establishments.models.establishments import \
     Establishment as EstablishmentModel
 from src.apps.establishments.models.establishments import \
     EstablishmentPhoto as EstablishmentPhotoModel
+import requests
 
 
 class EstablishmentPhotoService(ABC):
@@ -51,13 +52,37 @@ class ORMEstablishmentPhotoService(EstablishmentPhotoService):
         photos_qs = EstablishmentPhotoModel.objects.filter(establishment_id=establishment_id)
         return [photo.to_entity() for photo in photos_qs]
 
+
     def create_photos(self, establishment_id: int, photo_files: List[UploadedFile]) -> List[EstablishmentPhotoEntity]:
         establishment = get_object_or_404(EstablishmentModel, pk=establishment_id)
-
         created_entities = []
+        
         for file in photo_files:
             photo_obj = EstablishmentPhotoModel.objects.create(establishment=establishment, photo=file)
             created_entities.append(photo_obj.to_entity())
+            
+            file.seek(0)
+            
+            files = {"image": (file.name, file, file.content_type)}
+            
+            try:
+                response = requests.post("http://fastapi:8001/analyze", files=files, timeout=10)
+                response.raise_for_status()
+                analysis_result = response.json().get("predictions", {})
+                print(f"AI analysis result: {analysis_result}")
+            except Exception as e:
+                print(f"Error calling AI service for image analysis: {e}")
+                analysis_result = {}
+            
+            updated = False
+            for feature, flag in analysis_result.items():
+                if flag and not getattr(establishment, feature, False):
+                    setattr(establishment, feature, True)
+                    updated = True
+                    
+            if updated:
+                establishment.save()
+        
         return created_entities
 
     def delete_photo(self, photo_id: int) -> bool:
