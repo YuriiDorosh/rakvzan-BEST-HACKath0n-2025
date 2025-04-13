@@ -45,3 +45,5 @@ SIMPLE_JWT = {
 }
 
 APP_NAME = "rakvzan"
+
+CORS_ALLOW_ALL_ORGINS = True
