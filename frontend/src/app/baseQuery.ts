@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: '/api/auth',
+    baseUrl: 'http://localhost/api/v1/ninja/',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token');
       if (token) {
@@ -10,19 +10,16 @@ const baseQuery = fetchBaseQuery({
       return headers;
     },
   });
-// TODO: Set types
-  const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
-    // Виконуємо початковий запит
-    let result = await baseQuery(args, api, extraOptions);
   
-    // Якщо отримали 401 – спробуємо виконати refresh
+  export const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
+    let result = await baseQuery(args, api, extraOptions);
+
     if (result.error && result.error.status === 401) {
       const refreshToken = localStorage.getItem('refreshToken');
       if (refreshToken) {
-        // Виконуємо запит на endpoint /refresh
         const refreshResult = await baseQuery(
           {
-            url: '/refresh',
+            url: 'token/refresh',
             method: 'POST',
             body: { refreshToken },
           },
@@ -53,7 +50,7 @@ const baseQuery = fetchBaseQuery({
     endpoints: (builder) => ({
       login: builder.mutation({
         query: (credentials) => ({
-          url: '/login',
+          url: 'token/login',
           method: 'POST',
           body: credentials,
         }),
