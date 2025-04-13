@@ -47,6 +47,9 @@ django-otp = { version = "1.5.4", markers = "python_version >= '3.11' and python
 qrcode = { version = "8.0", markers = "python_version >= '3.11' and python_version < '4.0'" }
 pyotp = { version = "2.9.0", markers = "python_version >= '3.11' and python_version < '4.0'" }
 pre-commit = { version = "3.8.0", markers = "python_version >= '3.11' and python_version < '4.0'" }
+google-auth = { version = "2.38.0", markers = "python_version >= '3.11' and python_version < '4.0'" }
+requests =  { version = "2.32.3", markers = "python_version >= '3.11' and python_version < '4.0'" }
+django-cors-headers =  { version = "4.3.1", markers = "python_version >= '3.11' and python_version < '4.0'" }
 
 [tool.poetry.dev-dependencies]
 mypy = "1.8.0"

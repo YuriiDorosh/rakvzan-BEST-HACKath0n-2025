@@ -33,6 +33,8 @@ THIRD_PARTY = [
     # "totp",
     "django_otp",
     "django_otp.plugins.otp_totp",
+    #CORS
+    "corsheaders",
 ]
 
 if env("USE_ELASTIC") == 1:
