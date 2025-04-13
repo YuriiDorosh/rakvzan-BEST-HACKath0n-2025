@@ -4,7 +4,7 @@ services:
   django-prod:
     build:
       context: ../..
-      dockerfile: docker_compose/django/Dockerfile-prod
+      dockerfile: docker_compose/django/Dockerfile
     container_name: django-prod
     restart: unless-stopped
     volumes:
