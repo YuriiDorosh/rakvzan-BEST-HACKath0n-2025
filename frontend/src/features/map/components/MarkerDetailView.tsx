@@ -33,7 +33,13 @@ const MarkerDetailView = () => {
                 }}
             />
             {detailMarker?.photos?.length > 0 &&
-                <img src={`http://localhost${detailMarker?.photos[0]?.photo_url}`}  alt="" />
+                <img 
+                    src={`http://localhost${detailMarker?.photos[0]?.photo_url}`} 
+                style={{
+                    width: '100%',
+                    height: 'auto'
+                }}
+                alt="" />
             }
             <Typography
                 variant="subtitle1"

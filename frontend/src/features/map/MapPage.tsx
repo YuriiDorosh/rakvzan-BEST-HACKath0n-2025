@@ -2,7 +2,7 @@ import { Box, Button } from "@mui/material"
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useLazyGetPointsQuery } from "./components/slices/mapSLice";
+import { useLazyGetPointsQuery } from "./slices/mapSLice";
 import { ReactComponent as MarkerIcon } from './assets/images/marker.svg'
 import { customAddIcon, customIcon } from "./components/CustomMarker";
 import { BaseCoorsType } from "../../types/baseCoorsType";
@@ -11,6 +11,9 @@ import MarkerDetailView from "./components/MarkerDetailView";
 import { useDispatch } from "react-redux";
 import { chaneIsOpen } from "../../app/store/detailMarkerSlice";
 import CreateMarkerModal from "./components/CreateMarkerModal";
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import RoutingMachine from "./components/RoutingMachine";
+
 
 function ClickHandler({ onMapClick }: any) {
   useMapEvents({
@@ -25,6 +28,28 @@ function ClickHandler({ onMapClick }: any) {
 const MapPage = () => {
   const [tempMark, setTempMark] = useState<BaseCoorsType | null>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false)
+  const [userPosition, setUserPosition] = useState<BaseCoorsType | null>(null);
+  const [endPosition, setEndPosition] = useState<BaseCoorsType | null>(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Помилка отримання геолокації:', error);
+          alert('Помилка отримання геолокації')
+        }
+      );
+    } else {
+      alert('Ваш браузер не підтримує геолокацію')
+      console.error('Ваш браузер не підтримує геолокацію');
+    }
+  }, []);
 
   const [triggerGetPoints, data] = useLazyGetPointsQuery({})
 
@@ -50,6 +75,9 @@ const MapPage = () => {
             width: 'calc(100% - 60px) !important',
             display: 'flex',
             justifyContent: 'center'
+          },
+          '& .leaflet-routing-container: last-child' :{
+            display: 'none'
           },
         }}
       >
@@ -79,6 +107,7 @@ const MapPage = () => {
                   <Popup>
                     <MarkerIconComponent
                       id={position.id}
+                      setEndPosition={setEndPosition}
                     />
                   </Popup>
                 </Marker>)
@@ -98,6 +127,8 @@ const MapPage = () => {
                   </Popup>
               </Marker>
             }
+            
+            {userPosition && endPosition && <RoutingMachine start={userPosition} end={endPosition} />}
             {/* <Polyline positions={positions.map(pos => [pos.lat, pos.lng])} /> */}
           </MapContainer>
       </Box>

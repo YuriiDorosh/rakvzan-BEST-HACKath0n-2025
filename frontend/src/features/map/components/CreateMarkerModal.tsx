@@ -3,7 +3,7 @@ import { Formik } from "formik"
 import { FC } from "react"
 import LoadImage from "../../loadImageComponent/LoadImage"
 import { AccessibilityListEnum } from "../../../utils/getAccessibilityList"
-import { usePostMarkerMutation, usePostPhotosMutation } from "./slices/markerSlices"
+import { usePostMarkerMutation, usePostPhotosMutation } from "../slices/markerSlices"
 
 interface CreateMarkerModalInterface {
     isOpen: boolean
@@ -58,24 +58,28 @@ const CreateMarkerModal: FC<CreateMarkerModalInterface> = ({
                     initialValues={{ 
                         name: '', 
                         address: '', 
-                        photos: [],
+                        photos: [] as File[],
                         // accessability: [], 
                         // ...Object.keys(AccessibilityListEnum).map((value) =>({
                         //     value: false
                         // }))
                     }}
-                    onSubmit={(values, { setSubmitting }) => {
-                        triggerPostMarker({
+                    onSubmit={async (values, { setSubmitting }) => {
+                        await triggerPostMarker({
                             name: values.name,
                             latitude: lat,
                             longitude: lng,
                             address: values.address,
-                        }).then((res) => {
-                            if (res.data.id){
+                        }).then((res: any) => {
+                            console.log(res)
+                            if (res.data.data.id){
                                 triggerPostMarkerPhotos({
                                     photos: values.photos,
-                                    id: res.data.id,
-                                }).then(()=>{handleClose()})
+                                    id: res.data.data.id,
+                                }).then(()=>{
+                                    handleClose()
+                                    window.location.reload()
+                                })
                             }
                         })
                     }}
@@ -97,10 +101,10 @@ const CreateMarkerModal: FC<CreateMarkerModalInterface> = ({
                         Додати
                     </Typography>
                     <LoadImage
-                        selectedImages={values.photos}
-                        setSelectedImages={(value: string[]) => setFieldValue('photos', value)}
-                    />
-                    {errors.photos}
+                        selectedFiles={values.photos}
+                        setSelectedFiles={(value: File[]) => setFieldValue('photos', value)}
+                        />
+                    {errors?.photos as string}
                     <Typography>
                         Назва закладу
                     </Typography>

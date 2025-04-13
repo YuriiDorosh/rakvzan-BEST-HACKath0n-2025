@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseApi, baseQueryWithReauth } from "../../../../app/baseQuery";
-import { unpackPrams } from "../../../../utils/unpackPrams";
+import { baseApi, baseQueryWithReauth } from "../../../app/baseQuery";
+import { unpackPrams } from "../../../utils/unpackPrams";
 
 export const mapApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

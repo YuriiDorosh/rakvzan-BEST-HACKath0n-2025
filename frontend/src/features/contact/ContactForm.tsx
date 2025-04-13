@@ -6,7 +6,7 @@ import LoadImage from "../loadImageComponent/LoadImage";
 const ContactForm = () => {
     return (
         <Formik
-            initialValues={{ text: '', image: '' }}
+            initialValues={{ text: '', image: [] as File[], }}
             onSubmit={(values, { setSubmitting }) => {
                 setTimeout(() => {
                 alert(JSON.stringify(values, null, 2));
@@ -69,11 +69,9 @@ const ContactForm = () => {
                 Додати
             </Typography>
             <LoadImage
-                selectedImages={[values.image]}
-                setSelectedImages={(value: string[] | null) => {
-                    value && setFieldValue('image', value[0])
-                }}
-            />
+                selectedFiles={values.image}
+                setSelectedFiles={(value: File[]) => setFieldValue('photos', value[0])}
+                />
             <Button
                 type="submit"
                 variant="contained"

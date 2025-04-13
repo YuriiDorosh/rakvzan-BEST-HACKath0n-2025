@@ -1,13 +1,14 @@
 import { Box, colors } from '@mui/material';
-import { useRef, ChangeEvent, FC, useEffect } from 'react';
+import { useRef, ChangeEvent, FC } from 'react';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
+// Змінюємо інтерфейс так, щоб зберігалися File об’єкти
 interface LoadImageInterface {
-  selectedImages: string[];
-  setSelectedImages: (value: string[]) => void;
+  selectedFiles: File[];
+  setSelectedFiles: (value: File[]) => void;
 }
 
-const LoadImage: FC<LoadImageInterface> = ({ selectedImages, setSelectedImages }) => {
+const LoadImage: FC<LoadImageInterface> = ({ selectedFiles, setSelectedFiles }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleBlockClick = (): void => {
@@ -16,22 +17,16 @@ const LoadImage: FC<LoadImageInterface> = ({ selectedImages, setSelectedImages }
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const files = event.target.files;
-    let tempArray: string[] = []
     if (files && files.length > 0) {
-      console.log(files)
-      const imagesArray = Array.from(files).map(file => URL.createObjectURL(file));
+      const newFiles = Array.from(files); 
       //@ts-ignore
-      tempArray = tempArray.concat(imagesArray)
+      setSelectedFiles(newFiles);
     }
-    setSelectedImages(tempArray);
   };
 
-  useEffect(()=>{
-    console.log(selectedImages)
-  }, [selectedImages])
-
+  // Видаляємо файл із списку за індексом
   const handleClearImage = (index: number): void => {
-    setSelectedImages(selectedImages.filter((_, i) => i !== index));
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -62,7 +57,7 @@ const LoadImage: FC<LoadImageInterface> = ({ selectedImages, setSelectedImages }
         Прикріпіть фото до відгуку
       </Box>
 
-      {selectedImages?.length > 0 && (
+      {selectedFiles.length > 0 && (
         <Box
           className="preview"
           sx={{
@@ -73,10 +68,11 @@ const LoadImage: FC<LoadImageInterface> = ({ selectedImages, setSelectedImages }
             justifyContent: 'center'
           }}
         >
-          {selectedImages[0] && selectedImages?.map((image, index) => (
+          {selectedFiles.map((file, index) => (
             <Box key={index} sx={{ position: 'relative', display: 'inline-block' }}>
+              {/* Генеруємо URL для прев'ю, але сам файл зберігаємо у стані */}
               <img
-                src={image}
+                src={URL.createObjectURL(file)}
                 alt={`Preview ${index + 1}`}
                 style={{
                   maxWidth: '200px',

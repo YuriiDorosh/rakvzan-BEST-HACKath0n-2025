@@ -1,15 +1,17 @@
 import { Box, Button, Grid, Paper, Rating, Typography } from "@mui/material"
-import { useGetPointQuery } from "./slices/mapSLice"
+import { useGetPointQuery } from "../slices/mapSLice"
 import { FC, useEffect, useRef, useState } from "react"
 import { getAccessibilityList } from "../../../utils/getAccessibilityList"
 import { useDispatch } from "react-redux"
 import { setValues } from "../../../app/store/detailMarkerSlice"
+import { BaseCoorsType } from "../../../types/baseCoorsType"
 
 interface MarkerIconComponentInterface {
     id: number
+    setEndPosition: (value: BaseCoorsType | null) => void
 }
 
-const MarkerIconComponent: FC<MarkerIconComponentInterface> = ({ id }) => {
+const MarkerIconComponent: FC<MarkerIconComponentInterface> = ({ id, setEndPosition }) => {
     const {data} = useGetPointQuery(id)
     const [accessibility, setAccessibility] = useState<any[]>([])
     const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -19,7 +21,6 @@ const MarkerIconComponent: FC<MarkerIconComponentInterface> = ({ id }) => {
     useEffect(() => {
         if (data?.data){
             setAccessibility(getAccessibilityList(data?.data))
-            console.log(getAccessibilityList(data?.data))
         }
     }, [data])
     return (
@@ -80,6 +81,12 @@ const MarkerIconComponent: FC<MarkerIconComponentInterface> = ({ id }) => {
                 >
                     <Button
                         variant="contained"
+                        onClick={()=>{
+                            setEndPosition({
+                                lng: data?.data.longitude,
+                                lat: data?.data.latitude,
+                            })
+                        }}
                     >
                         Прокласти маршрут
                     </Button>
