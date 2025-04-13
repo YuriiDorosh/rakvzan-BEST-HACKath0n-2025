@@ -183,13 +183,13 @@ services:
     restart: unless-stopped
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     ports:
-      - "82:82"
+      - "443:443"
     volumes:
       - ../../logs/nginx:/var/log/nginx
       - ../../src:/app/src 
       - ../../.env:/app/.env
-      - ../../../devops/ssl/prod/backend/archive:/etc/letsencrypt/archive/rakvzan.space
-      - ../../../devops/ssl/prod/backend/live:/etc/letsencrypt/live/rakvzan.space
+      - ../../../devops/ssl/prod/backend/archive:/etc/letsencrypt/archive/api.rakvzan.space
+      - ../../../devops/ssl/prod/backend/live:/etc/letsencrypt/live/api.rakvzan.space
     env_file:
       - ../../.env
     depends_on:
