@@ -68,10 +68,12 @@ class CommentSchema(BaseModel):
             images=entity.images,
             likes=entity.likes,
         )
-        
+
+
 class CommentCreateSchema(BaseModel):
     comment: str
     rating: Optional[float] = None
+
 
 class EstablishmentPhotoSchema(BaseModel):
     id: int

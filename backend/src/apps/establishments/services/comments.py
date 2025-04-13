@@ -4,17 +4,11 @@ from uuid import UUID
 
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import UploadedFile
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from src.apps.establishments.entities import (
-    CommentEntity,
-    CommentLikeEntity,
-)
-from src.apps.establishments.models import (
-    Comment as CommentModel,
-    CommentImage as CommentImageModel,
-    CommentLike as CommentLikeModel,
-)
+from src.apps.establishments.entities import CommentEntity, CommentLikeEntity
+from src.apps.establishments.models import Comment as CommentModel
+from src.apps.establishments.models import CommentImage as CommentImageModel
+from src.apps.establishments.models import CommentLike as CommentLikeModel
 
 
 class CommentService(ABC):
@@ -25,7 +19,6 @@ class CommentService(ABC):
         user_id: Optional[UUID] = None,
     ) -> List[CommentEntity]:
         """Get comments for an establishment"""
-        pass
 
     @abstractmethod
     def create_comment(
@@ -37,8 +30,7 @@ class CommentService(ABC):
         images: Optional[List[UploadedFile]] = None,
     ) -> CommentEntity:
         """Create a new comment for an establishment"""
-        pass
-    
+
     @abstractmethod
     def update_comment(
         self,
@@ -48,28 +40,23 @@ class CommentService(ABC):
         rating: Optional[int],
     ) -> CommentEntity:
         """Update an existing comment"""
-        pass
 
     @abstractmethod
     def like_comment(self, comment_id: int, user: User) -> CommentLikeEntity:
         """Like a comment"""
-        pass
-    
+
     @abstractmethod
     def unlike_comment(self, comment_id: int, user: User) -> None:
         """Unlike a comment"""
-        pass
-    
+
     @abstractmethod
     def delete_comment(self, comment_id: int, user: User) -> None:
         """Delete a comment"""
-        pass
-    
+
     @abstractmethod
     def delete_comment_image(self, comment_id: int, image_id: int) -> None:
         """Delete a comment image"""
-        pass
-    
+
 
 class ORMCommentService(CommentService):
     def get_comments(
@@ -108,7 +95,7 @@ class ORMCommentService(CommentService):
             for image in images:
                 CommentImageModel.objects.create(comment=comment_instance, image=image)
         return comment_instance.to_entity()
-    
+
     def update_comment(
         self,
         comment_id: int,
@@ -121,25 +108,25 @@ class ORMCommentService(CommentService):
         comment_instance.comment = comment
         comment_instance.raiting = rating
         comment_instance.save()
-        
-        return comment_instance.to_entity() 
-    
+
+        return comment_instance.to_entity()
+
     def like_comment(self, comment_id: int, user: User) -> CommentLikeEntity:
         """Like a comment"""
         comment = get_object_or_404(CommentModel, id=comment_id)
         like = CommentLikeModel.objects.create(comment=comment, user=user)
         return like.to_entity()
-    
+
     def unlike_comment(self, comment_id: int, user: User) -> None:
         """Unlike a comment"""
         like = get_object_or_404(CommentLikeModel, comment_id=comment_id, user=user)
         like.delete()
-        
+
     def delete_comment(self, comment_id: int, user: User) -> None:
         """Delete a comment"""
         comment = get_object_or_404(CommentModel, id=comment_id, user=user)
         comment.delete()
-        
+
     def delete_comment_image(self, comment_id: int, image_id: int) -> None:
         """Delete a comment image"""
         image = get_object_or_404(CommentImageModel, id=image_id, comment_id=comment_id)

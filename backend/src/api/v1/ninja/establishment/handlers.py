@@ -14,7 +14,6 @@ from src.api.v1.ninja.establishment.schemas import (
     EstablishmentUpdateSchema,
     CommentSchema,
     CommentLikeSchema,
-    CommentImageSchema,
     CommentCreateSchema,
 )
 from src.apps.establishments.services.establishments import (
@@ -242,7 +241,7 @@ class EstablishmentController:
                 status=is_photo_deleted,
             ),
         )
-    
+
     @route.get(
         "/{establishment_id}/comments",
         response=ApiResponse[List[CommentSchema]],
@@ -263,7 +262,7 @@ class EstablishmentController:
         return ApiResponse(
             data=data,
         )
-        
+
     @route.post(
         "/{establishment_id}/comments/like",
         response=ApiResponse[CommentLikeSchema],
@@ -288,7 +287,7 @@ class EstablishmentController:
         return ApiResponse(
             data=data,
         )
-        
+
     @route.delete(
         "/{establishment_id}/comments/like",
         response=ApiResponse[StatusOkSchema],
@@ -340,7 +339,7 @@ class EstablishmentController:
         return ApiResponse(
             data=data,
         )
-        
+
     @route.delete(
         "/{establishment_id}/comments/{comment_id}",
         response=ApiResponse[StatusOkSchema],
@@ -363,7 +362,7 @@ class EstablishmentController:
         return ApiResponse(
             data=StatusOkSchema(status=True),
         )
-        
+
     @route.delete(
         "/{establishment_id}/comments/{comment_id}/images/{image_id}",
         response=ApiResponse[StatusOkSchema],
@@ -385,7 +384,7 @@ class EstablishmentController:
         return ApiResponse(
             data=StatusOkSchema(status=True),
         )
-        
+
     @route.get(
         "/comments/list",
         response=ApiResponse[List[CommentSchema]],
@@ -410,7 +409,7 @@ class EstablishmentController:
         )
         
         data = [CommentSchema.from_entity(comment) for comment in comments]
-        
+
         return ApiResponse(
             data=data,
         )

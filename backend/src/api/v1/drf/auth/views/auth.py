@@ -10,14 +10,12 @@ from src.api.v1.drf.auth.serializers import (
     LoginUserSerializer,
     UserAuthSerializer,
 )
+from src.apps.common.permissions import IsNotAuthenticated
 from src.apps.users.services.emails import send_email
 from src.apps.users.services.tokens import create_jwt_pair_for_user
-from src.apps.common.permissions import IsNotAuthenticated
 
 User = get_user_model()
 
-from django.conf import settings
-import logging
 
 class RegistrateUserView(CreateAPIView):
     permission_classes = [IsNotAuthenticated]
@@ -30,17 +28,17 @@ class RegistrateUserView(CreateAPIView):
             if serializer.is_valid(raise_exception=True):
                 print(serializer.validated_data)
                 user = serializer.save()
-                token = User.objects.generate_email_token(user)
+                code = User.objects.generate_email_token(user)
                 send_email(
                     subject="Confirm your email",
                     template="email/email_verification.html",
                     user=user,
-                    code=token,
+                    code=code,
                 )
                 return Response(
                     data={
                         "tokens": create_jwt_pair_for_user(user=user),
-                        "email_token": token,
+                        "code": code,
                     },
                     status=status.HTTP_201_CREATED,
                 )
@@ -51,7 +49,6 @@ class RegistrateUserView(CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            logging.error(f"Unexpected error: {e}", exc_info=True)
             return Response(
                 data={"message": f"Unexpected error: {e}"},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -1,10 +1,10 @@
-<!-- filepath: /home/oleksandr/Desktop/rakvzan-BEST-HACKath0n-2025/backend/src/apps/users/templates/email/password_reset.html -->
+<!-- filepath: /home/oleksandr/Desktop/rakvzan-BEST-HACKath0n-2025/backend/src/apps/users/templates/email/delete_user.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Password Reset</title>
+    <title>Account Deletion</title>
     <style type="text/css">
       body {
         margin: 0;
@@ -21,7 +21,7 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
       .header {
-        background-color: #2196F3;
+        background-color: #f44336;
         text-align: center;
         padding: 20px;
       }
@@ -53,15 +53,15 @@
   <body>
     <div class="email-container">
       <div class="header">
-        <h1>Password Reset</h1>
+        <h1>Account Deletion</h1>
       </div>
       <div class="content">
-        <p>Hello {{ user.username }},</p>
-        <p>Your password reset code is:</p>
+        <p>Hi {{ user.username }},</p>
+        <p>Your account deletion confirmation code is:</p>
         <p><strong>{{ code }}</strong></p>
       </div>
       <div class="footer">
-        <p>If you did not request a password reset, please ignore this email.</p>
+        <p>If you did not request this, please contact us immediately.</p>
       </div>
     </div>
   </body>
