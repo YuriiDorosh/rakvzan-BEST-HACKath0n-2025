@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { FC, ReactNode } from "react";
 import {ReactComponent as LogoImage} from '../../../app/assets/images/logo.svg'
 import { useDispatch } from "react-redux";
@@ -26,28 +26,50 @@ const Header = () => {
                     }}
                 />
             </Box>
-            <Box>
+            {localStorage.getItem('username')?
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center'
+                }}
+            >
+                <Typography variant="subtitle2">
+                    {localStorage.getItem('username')}
+                </Typography>
                 <Button
-                    sx={{
-                        height: '36px'
-                    }}
-                    variant="contained"
                     onClick={()=>{
-                        dispatch(changeOpenState(true))
+                        localStorage.clear()
+                        window.location.reload()
                     }}
                 >
-                    Увійти
+                    Вийти
                 </Button>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        marginLeft: '16px',
-                        height: '36px',
-                    }}
-                >
-                    Зареєструватись
-                </Button>
-            </Box>
+            </Box>    
+            :
+                <Box>
+                    <Button
+                        sx={{
+                            height: '36px'
+                        }}
+                        variant="contained"
+                        onClick={()=>{
+                            dispatch(changeOpenState(true))
+                        }}
+                    >
+                        Увійти
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            marginLeft: '16px',
+                            height: '36px',
+                        }}
+                    >
+                        Зареєструватись
+                    </Button>
+                </Box>
+            
+            }
         </Box>
     );
 };

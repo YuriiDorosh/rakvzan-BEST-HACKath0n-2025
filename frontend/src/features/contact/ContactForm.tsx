@@ -69,9 +69,9 @@ const ContactForm = () => {
                 Додати
             </Typography>
             <LoadImage
-                selectedImage={values.image}
-                setSelectedImage={(value: string | null) => {
-                    setFieldValue('image', value)
+                selectedImages={[values.image]}
+                setSelectedImages={(value: string[] | null) => {
+                    value && setFieldValue('image', value[0])
                 }}
             />
             <Button
