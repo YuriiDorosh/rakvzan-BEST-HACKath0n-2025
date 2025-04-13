@@ -6,9 +6,7 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import UploadedFile
 from django.shortcuts import get_object_or_404
 from src.apps.establishments.entities import CommentEntity, CommentLikeEntity
-from src.apps.establishments.models import Comment as CommentModel
-from src.apps.establishments.models import CommentImage as CommentImageModel
-from src.apps.establishments.models import CommentLike as CommentLikeModel
+from src.apps.establishments.models import Comment as CommentModel, CommentImage as CommentImageModel, CommentLike as CommentLikeModel, Establishment as EstablishmentModel
 
 
 class CommentService(ABC):
@@ -94,6 +92,13 @@ class ORMCommentService(CommentService):
         if images:
             for image in images:
                 CommentImageModel.objects.create(comment=comment_instance, image=image)
+                
+        if rating is not None:
+            establishment = EstablishmentModel.objects.get(id=establishment_id)
+            establishment.raiting = (
+                (establishment.raiting * establishment.comments.count()) + rating
+            ) / (establishment.comments.count() + 1)
+            establishment.save()
         return comment_instance.to_entity()
 
     def update_comment(
@@ -109,6 +114,13 @@ class ORMCommentService(CommentService):
         comment_instance.raiting = rating
         comment_instance.save()
 
+        if rating is not None:
+            establishment = EstablishmentModel.objects.get(id=comment_instance.establishment_id)
+            establishment.raiting = (
+                (establishment.raiting * establishment.comments.count()) + rating
+            ) / (establishment.comments.count() + 1)
+            establishment.save()
+        
         return comment_instance.to_entity()
 
     def like_comment(self, comment_id: int, user: User) -> CommentLikeEntity:

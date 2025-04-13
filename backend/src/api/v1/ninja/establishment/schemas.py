@@ -1,6 +1,6 @@
 from typing import List, Optional
 from uuid import UUID
-
+from datetime import datetime
 from pydantic import BaseModel
 from src.apps.establishments.entities import (
     CommentEntity,
@@ -53,6 +53,8 @@ class CommentSchema(BaseModel):
     rating: Optional[float] = None
     images: Optional[List[CommentImageEntity]] = None
     likes: Optional[List[CommentLikeEntity]] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     @staticmethod
     def from_entity(entity: CommentEntity) -> Optional["CommentSchema"]:
@@ -67,6 +69,8 @@ class CommentSchema(BaseModel):
             rating=entity.rating,
             images=entity.images,
             likes=entity.likes,
+            created_at=entity.created_at,
+            updated_at=entity.updated_at,
         )
 
 

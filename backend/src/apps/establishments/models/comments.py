@@ -55,6 +55,8 @@ class Comment(TimedAndUnixIdBaseModel):
             rating=self.raiting,
             images=[image.to_entity() for image in self.images.all()],
             likes=[like.to_entity() for like in self.likes.all()],
+            created_at=self.created_at,
+            updated_at=self.updated_at,
         )
 
 
