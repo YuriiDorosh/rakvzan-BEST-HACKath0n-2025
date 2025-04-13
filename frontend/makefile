@@ -3,12 +3,19 @@
 SERVICE_NAME = react-app
 ENV_PATH = --env-file .env
 COMPOSE_FILE = docker_compose/front/docker-compose.yml
+COMPOSE_FILE_PROD = docker_compose/front/docker-compose-prod.yml
 
 build:
 	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) build
 
 up:
 	docker compose -f $(COMPOSE_FILE) $(ENV_PATH) up -d
+
+up-prod:
+	docker compose -f $(COMPOSE_FILE_PROD) $(ENV_PATH) up -d --build
+
+down-prod:
+	docker compose -f $(COMPOSE_FILE_PROD) $(ENV_PATH) down
 
 down:
 	docker compose $(ENV_PATH) -f $(COMPOSE_FILE) down
