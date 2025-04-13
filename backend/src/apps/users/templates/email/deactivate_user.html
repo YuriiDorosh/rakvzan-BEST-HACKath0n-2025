@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -45,9 +46,7 @@
         border-top: 1px solid #dddddd;
       }
       @media only screen and (max-width: 600px) {
-        .email-container {
-          width: 100% !important;
-        }
+        .email-container { width: 100% !important; }
       }
     </style>
   </head>
@@ -58,17 +57,11 @@
       </div>
       <div class="content">
         <p>Hi {{ user.username }},</p>
-        <p>
-          Your account has been successfully deactivated.
-        </p>
-        <p>
-          If this was not you or you wish to reactivate your account, please contact support.
-        </p>
+        <p>Your account deactivation code is:</p>
+        <p><strong>{{ code }}</strong></p>
       </div>
       <div class="footer">
-        <p>
-          If you did not request this, please ignore this email.
-        </p>
+        <p>If this was not you, please contact support immediately.</p>
       </div>
     </div>
   </body>
