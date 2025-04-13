@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.1

@@ -12,6 +12,10 @@ export const theme = createTheme({
             color: colors.common.white,
             fontWeight: 700
         },
+        h4: {
+            fontSize: '40px',
+            fontWeight: 700
+        },
         subtitle2: {
             fontSize: '20px',
             fontWeight: 400,
