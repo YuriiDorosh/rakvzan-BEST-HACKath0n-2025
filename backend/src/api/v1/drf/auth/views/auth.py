@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.request import Request
-from rest_framework.response import Response
+from src.api.v1.drf.schemas import ApiResponse
 from src.api.v1.drf.auth.serializers import (
     LoginUserSerializer,
     UserAuthSerializer,
@@ -39,7 +39,7 @@ class RegistrateUserView(CreateAPIView):
                     user=user,
                     code=code,
                 )
-                return Response(
+                return ApiResponse(
                     data={
                         "tokens": create_jwt_pair_for_user(user=user),
                         "code": code,
@@ -48,12 +48,12 @@ class RegistrateUserView(CreateAPIView):
                 )
 
         except ValidationError as e:
-            return Response(
+            return ApiResponse(
                 data={"message": e.detail},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            return Response(
+            return ApiResponse(
                 data={"message": f"Unexpected error: {e}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -69,28 +69,28 @@ class UserLoginView(CreateAPIView):
 
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data
-            return Response(data=create_jwt_pair_for_user(user), status=status.HTTP_200_OK)
+            return ApiResponse(data=create_jwt_pair_for_user(user), status=status.HTTP_200_OK)
 
-        return Response(data={"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return ApiResponse(data={"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GoogleLoginView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         token = request.data.get("id_token")
         if not token:
-            return Response({"error": "Missing Google ID token"}, status=status.HTTP_400_BAD_REQUEST)
+            return ApiResponse({"error": "Missing Google ID token"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.GOOGLE_CLIENT_ID)
         except ValueError:
-            return Response({"error": "Invalid Google token"}, status=status.HTTP_401_UNAUTHORIZED)
+            return ApiResponse({"error": "Invalid Google token"}, status=status.HTTP_401_UNAUTHORIZED)
 
         if idinfo.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
-            return Response({"error": "Invalid issuer"}, status=status.HTTP_401_UNAUTHORIZED)
+            return ApiResponse({"error": "Invalid issuer"}, status=status.HTTP_401_UNAUTHORIZED)
 
         email = idinfo.get("email")
         if not email:
-            return Response({"error": "Google token did not provide an email"}, status=status.HTTP_400_BAD_REQUEST)
+            return ApiResponse({"error": "Google token did not provide an email"}, status=status.HTTP_400_BAD_REQUEST)
 
         user, created = User.objects.get_or_create(
             email=email,
@@ -106,4 +106,4 @@ class GoogleLoginView(CreateAPIView):
 
         tokens = create_jwt_pair_for_user(user)
 
-        return Response(tokens, status=status.HTTP_200_OK)
+        return ApiResponse(tokens, status=status.HTTP_200_OK)
