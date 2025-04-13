@@ -23,12 +23,16 @@ services:
       dockerfile: docker_compose/nginx/Dockerfile-prod
     ports:
       - "${NGINX_PORT}:${NGINX_PORT}"
+    volumes:
+      - ../../:/app
+      - /app/node_modules 
+      - ../../../devops/ssl/prod/frontend/archive:/etc/letsencrypt/archive/rakvzan.space
+      - ../../../devops/ssl/prod/frontend/live:/etc/letsencrypt/live/rakvzan.space
     depends_on:
-      - front-prod
-    links:
       - front-prod
     networks:
       - backend-prod
+
 networks:
   backend-prod:
     external: true
