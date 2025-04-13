@@ -23,6 +23,8 @@ cd frontend
 make up
 ```
 or you could check it on [rakvzan](https://rakvzan.space/)
+Then checkout [drf](https://api.rakvzan.space/api/swagger/) for drf swagger
+Or [ninja](https://api.rakvzan.space/api/v1/ninja/docs) for django ninja swagger
 
 [figma link](https://www.figma.com/design/I6EbpelFsat54aXF4JiG33/InclusiveMap?node-id=0-1&p=f)
 
