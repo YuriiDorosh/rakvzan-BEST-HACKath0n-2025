@@ -2,6 +2,7 @@ import { Box, Button, colors, Typography } from "@mui/material"
 import Grid from "@mui/material/Grid"
 import { ReactComponent as MainPageIcon  } from "../images/mainPageIcon.svg"
 import EditIcon from '@mui/icons-material/Edit'
+import { Link } from "react-router-dom"
 
 const Greetings = () => {
     return(
@@ -46,20 +47,24 @@ const Greetings = () => {
                             marginTop: '59px'
                         }}
                     >
-                        <Button
-                            variant='contained'
-                        >
-                            ЗНАЙТИ МІСЦЕ
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                marginLeft: '32px'
-                            }}
-                        >
-                            <EditIcon/>
-                            ДОДАТИ МІСЦЕ
-                        </Button>
+                        <Link to="/map">
+                            <Button
+                                variant='contained'
+                            >
+                                ЗНАЙТИ МІСЦЕ
+                            </Button>
+                        
+                        </Link>
+                        <Link to="/contact">
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    marginLeft: '32px'
+                                }}
+                            >
+                                КОНТАКТИ
+                            </Button>
+                        </Link>
                     </Box>
 
                 </Box>

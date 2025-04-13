@@ -103,7 +103,7 @@ const CreateMarkerModal: FC<CreateMarkerModalInterface> = ({
                     <LoadImage
                         selectedFiles={values.photos}
                         setSelectedFiles={(value: File[]) => setFieldValue('photos', value)}
-                        />
+                    />
                     {errors?.photos as string}
                     <Typography>
                         Назва закладу

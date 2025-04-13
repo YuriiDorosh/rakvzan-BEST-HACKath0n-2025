@@ -5,6 +5,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useLoginMutation } from "../authApi";
 import { changeOpenState } from "../../../app/store/authMenuSlice";
 import { useDispatch } from "react-redux";
+import FaceIcon from '@mui/icons-material/Face';
 
 const LoginForm = () =>{
     const [triggerLogin] = useLoginMutation()
@@ -50,10 +51,10 @@ const LoginForm = () =>{
          <form onSubmit={handleSubmit} style={{ width: '80%', marginTop: '24px' }}>
            <FormControl variant="standard" sx={{ width: '100%' }}>
             <Typography>
-                Пошта
+                Логін
             </Typography>
            <TextField
-                placeholder="example@gmail.com"
+                placeholder="login"
                 id="input-with-icon-textfield"
                 name="email"
                 onChange={handleChange}
@@ -66,7 +67,7 @@ const LoginForm = () =>{
                     input: {
                         startAdornment: (
                         <InputAdornment position="start">
-                            <MailOutlineIcon />
+                            <FaceIcon />
                         </InputAdornment>
                         ),
                     },

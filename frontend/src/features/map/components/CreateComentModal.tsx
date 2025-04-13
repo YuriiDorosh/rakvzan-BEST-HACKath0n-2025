@@ -1,8 +1,11 @@
-import { Box, Button, Checkbox, colors, FormControl, FormControlLabel, FormGroup, Modal, TextField, Typography } from "@mui/material"
+import { Box, Button, Checkbox, colors, FormControl, FormControlLabel, FormGroup, Modal, Rating, TextField, Typography } from "@mui/material"
 import { Formik } from "formik"
 import { FC } from "react"
 import LoadImage from "../../loadImageComponent/LoadImage"
 import { AccessibilityListEnum } from "../../../utils/getAccessibilityList"
+import { usePostCommentMutation } from "../slices/commentSLice"
+import { RootState } from "../../../app/baseStore"
+import { useSelector } from "react-redux"
 
 interface CreateComentModalInterface {
     isOpen: boolean
@@ -13,6 +16,10 @@ const CreateComentModal: FC<CreateComentModalInterface> = ({
     isOpen,
     handleClose,
 }) => {
+    
+    const detailMarker = useSelector((state: RootState) => state.detailMarker);
+    const [triggerPostComment] = usePostCommentMutation()
+
     return(
         <Modal
             open={isOpen}
@@ -34,24 +41,28 @@ const CreateComentModal: FC<CreateComentModalInterface> = ({
                     borderRadius:" 25px",
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    overflowY: 'auto',
+                    
                 }}
             >
                 <Formik
                     initialValues={{ 
-                        name: '', 
-                        address: '', 
-                        photos: [], 
-                        accessability: [], 
-                        ...Object.keys(AccessibilityListEnum).map((value) =>({
-                            value: false
-                        }))
+                        comment: '', 
+                        rating: 0, 
+                        photos: [] as File[], 
                     }}
                     onSubmit={(values, { setSubmitting }) => {
-                        setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                            setSubmitting(false);
-                        }, 400);
+                        triggerPostComment({
+                            id: detailMarker.id,
+                            photos: values.photos,
+                            payload: {
+                                comment: values.comment,
+                                rating: values.rating
+                            }
+                        }).then((res) => {
+                            window.location.reload()
+                        })
                     }}
                 >
                 {({
@@ -63,71 +74,44 @@ const CreateComentModal: FC<CreateComentModalInterface> = ({
                     handleSubmit,
                     isSubmitting,
                     setFieldValue
-                    /* and other goodies */
                 }) => (
                     <form onSubmit={handleSubmit} style={{ width: '80%', marginTop: '24px' }}>
                     <FormControl variant="standard" sx={{ width: '100%' }}>
                     <Typography>
                         Додати
                     </Typography>
-                    {/* <LoadImage
-                        selectedImage={''}
-                        setSelectedImage={(value: string | null) => {
-
-                        }}
-                    /> */}
+                    <LoadImage
+                        selectedFiles={values.photos}
+                        setSelectedFiles={(value: File[]) => setFieldValue('photos', value)}
+                    />
                     <Typography>
-                        Назва закладу
+                        Коментар
                     </Typography>
                     <TextField
-                        placeholder="example@gmail.com"
+                        rows={6}
                         id="input-with-icon-textfield"
                         label=""
+                        name="comment"
+                        value={values.comment}
+                        onChange={handleChange}
                         sx={{
                             width: '100%'
                         }}
-                        error={!!errors?.name}
+                        error={!!errors?.comment}
                     />
                     <Typography
                         sx={{
                             marginTop: '16px',
                         }}
                     >
-                        Адреса
+                        Оцінка
                     </Typography>
-                    <TextField
-                        placeholder="*******"
-                        id="input-with-icon-textfield"
-                        type="password"
-                        label=""
-                        sx={{
-                            width: '100%'
-                        }}
-                        error={!!errors?.address}
-                    />
                     
-                    <Typography
-                        sx={{
-                            marginTop: '16px',
-                        }}
-                    >
-                        Доступність
-                    </Typography>
-                    <FormGroup>
-                        {Object.keys(AccessibilityListEnum).map((value, index) => {
-                            return (
-                                <FormControlLabel 
-                                    key={index}
-                                    control={<Checkbox checked={!!values[value as keyof typeof values]} />} 
-                                    label={AccessibilityListEnum[value as keyof typeof AccessibilityListEnum]}
-                                    onChange={(_, checked) => {
-                                        
-                                        setFieldValue(value, checked)
-                                    }}
-                                />
-                            )
-                        })}
-                    </FormGroup>
+                       
+                    <Rating name="read-only" value={values.rating} onChange={(_, value) => {
+                        console.log(value)
+                        setFieldValue('rating', value)
+                    }}/>
                     <Button
                         type="submit"
                         variant="contained"

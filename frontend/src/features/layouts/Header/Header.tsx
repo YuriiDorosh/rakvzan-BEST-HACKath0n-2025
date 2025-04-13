@@ -1,13 +1,15 @@
-import { Box, Button, Typography } from "@mui/material";
-import { FC, ReactNode } from "react";
+import { Box, Button, Drawer, Typography } from "@mui/material";
+import { FC, ReactNode, useState } from "react";
 import {ReactComponent as LogoImage} from '../../../app/assets/images/logo.svg'
 import { useDispatch } from "react-redux";
 import { changeOpenState } from "../../../app/store/authMenuSlice";
 import LoginPage from "../../auth/loginPage/LoginPage";
+import UserPage from "../../userPage/UserPage";
 
 const Header = () => {
 
     const dispatch = useDispatch()
+    const [isAccountPageOpen, setIsAccountPageOpen] = useState<boolean>(false)
     
     return (
         <Box
@@ -17,6 +19,15 @@ const Header = () => {
                 padding: '19px 42px'
             }}
         >
+            <Drawer 
+                anchor="top" 
+                open={isAccountPageOpen} 
+                onClose={() => setIsAccountPageOpen(false)}
+            >
+                <UserPage
+                    handleClose={() => setIsAccountPageOpen(false)}
+                />
+            </Drawer>
             <LoginPage/>
             <Box>
                 <LogoImage
@@ -33,7 +44,12 @@ const Header = () => {
                     alignItems: 'center'
                 }}
             >
-                <Typography variant="subtitle2">
+                <Typography 
+                    variant="subtitle2"
+                    onClick={()=>{
+                        setIsAccountPageOpen(!isAccountPageOpen)
+                    }}
+                >
                     {localStorage.getItem('username')}
                 </Typography>
                 <Button

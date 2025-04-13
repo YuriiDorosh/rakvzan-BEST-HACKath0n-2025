@@ -13,6 +13,9 @@ import { chaneIsOpen } from "../../app/store/detailMarkerSlice";
 import CreateMarkerModal from "./components/CreateMarkerModal";
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import RoutingMachine from "./components/RoutingMachine";
+import MapFilterPanel from "./components/MapFilterPanel";
+import { AccessibilityListEnum } from "../../utils/getAccessibilityList";
+import TuneIcon from '@mui/icons-material/Tune';
 
 
 function ClickHandler({ onMapClick }: any) {
@@ -30,11 +33,18 @@ const MapPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false)
   const [userPosition, setUserPosition] = useState<BaseCoorsType | null>(null);
   const [endPosition, setEndPosition] = useState<BaseCoorsType | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [accessibilityChecked, setAccessibilityChecked] = useState<boolean>(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState<boolean>(false)
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          // setUserPosition({
+          //   lat: position.coords.latitude,
+          //   lng: position.coords.longitude,
+          // });
           setUserPosition({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -81,6 +91,42 @@ const MapPage = () => {
           },
         }}
       >
+        <TuneIcon
+          sx={{
+            position: 'absolute',
+            top: '100px',
+            zIndex: 500,
+            right: '50px'
+          }}
+          onClick={()=>{
+            setIsFiltersOpen(!isFiltersOpen)
+          }}
+        />
+        <MapFilterPanel
+          categories={Object.values(AccessibilityListEnum)}
+          selectedCategories={selectedCategories}
+          onChangeCategories={setSelectedCategories}
+          accessibilityChecked={accessibilityChecked}
+          onChangeAccessibility={setAccessibilityChecked}
+          isOpen={isFiltersOpen}
+          handleClose={()=>{
+            setIsFiltersOpen(false)
+          }}
+          onApply={()=>{
+            console.log(selectedCategories)
+            let filteredKeys: any = []
+            console.log(Object.keys(AccessibilityListEnum).forEach((value: string) =>{
+              console.log(selectedCategories.includes(AccessibilityListEnum[value as keyof typeof AccessibilityListEnum]))
+              if(selectedCategories.includes(AccessibilityListEnum[value as keyof typeof AccessibilityListEnum])){
+                filteredKeys[value as keyof typeof filteredKeys] = true
+              }
+            }))
+            triggerGetPoints(filteredKeys)
+          }}
+          onCancel={()=>{
+
+          }}
+        />
         <CreateMarkerModal
           isOpen={isCreateModalOpen}
           handleClose={()=>{
