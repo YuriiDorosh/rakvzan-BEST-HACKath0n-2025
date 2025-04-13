@@ -17,8 +17,10 @@ DB_CONTAINER = postgres
 ELASTIC_CONTAINER = elasticsearch
 KIBANA_CONTAINER = kibana
 APM_CONTAINER = apm-server
+FASTAPI_CONTAINER = fastapi
 
 NETWORK_NAME = backend
+NETWORK_NAME_PROD = backend_prod
 
 MAKE = make
 
@@ -48,12 +50,22 @@ check-network:
 		echo "Network $(NETWORK_NAME) already exists."; \
 	fi
 
+check-network-prod:
+	@echo "Checking for network $(NETWORK_NAME_PROD)..."
+	@if ! docker network ls | grep -q $(NETWORK_NAME_PROD); then \
+		echo "Network $(NETWORK_NAME_PROD) does not exist. Creating..."; \
+		docker network create $(NETWORK_NAME_PROD); \
+	else \
+		echo "Network $(NETWORK_NAME_PROD) already exists."; \
+	fi
+
 up-all: check-network
 	$(MAKE) up-db
 	$(MAKE) up-django
 	$(MAKE) up-pgadmin
 	$(MAKE) up-adminer
 	$(MAKE) up-monitoring
+	$(MAKE) fastapi
 
 up-all-no-cache: check-network
 	$(MAKE) up-db-no-cache
@@ -61,6 +73,7 @@ up-all-no-cache: check-network
 	$(MAKE) up-pgadmin
 	$(MAKE) up-adminer
 	$(MAKE) up-monitoring
+	$(MAKE) up-fastapi
 
 down-all:
 	$(MAKE) down-db
@@ -68,24 +81,42 @@ down-all:
 	$(MAKE) down-pgadmin
 	$(MAKE) down-adminer
 	$(MAKE) down-monitoring
+	$(MAKE) down-fastapi
 
 up-all-without-monitoring: check-network
 	$(MAKE) up-db
 	$(MAKE) up-django
 	$(MAKE) up-pgadmin
 	$(MAKE) up-adminer
+	$(MAKE) up-fastapi
 
 up-all-no-cache-without-monitoring: check-network
 	$(MAKE) up-db-no-cache
 	$(MAKE) up-django-no-cache
 	$(MAKE) up-pgadmin
 	$(MAKE) up-adminer
+	$(MAKE) up-fastapi
+
+up-all-no-cache-without-monitoring-prod: check-network-prod
+	$(MAKE) up-db-no-cache-prod
+	$(MAKE) up-django-no-cache-prod
+	$(MAKE) up-pgadmin-prod
+	$(MAKE) up-adminer-prod
+	$(MAKE) up-fastapi-prod
 
 down-all-without-monitoring:
 	$(MAKE) down-db
 	$(MAKE) down-django
 	$(MAKE) down-pgadmin
 	$(MAKE) down-adminer
+	$(MAKE) down-fastapi
+
+down-all-without-monitoring-prod:
+	$(MAKE) down-db-prod
+	$(MAKE) down-django-prod
+	$(MAKE) down-pgadmin-prod
+	$(MAKE) down-adminer-prod
+	$(MAKE) down-fastapi-prod
 
 down-all-volumes:
 	$(MAKE) down-db-volumes
@@ -93,6 +124,7 @@ down-all-volumes:
 	$(MAKE) down-pgadmin-volumes
 	$(MAKE) down-adminer-volumes
 	$(MAKE) down-monitoring-volumes
+	$(MAKE) down-fastapi-volumes
 
 up-monitoring:
 	$(DC) -f docker_compose/elastic/docker-compose.yml \
@@ -130,8 +162,15 @@ up-db-no-cache:
 	$(DC) -f docker_compose/db/docker-compose.yml $(ENV) build --no-cache
 	$(DC) -f docker_compose/db/docker-compose.yml $(ENV) up -d
 
+up-db-no-cache-prod:
+	$(DC) -f docker_compose/db/docker-compose-prod.yml $(ENV) build --no-cache
+	$(DC) -f docker_compose/db/docker-compose-prod.yml $(ENV) up -d
+
 down-db:
 	$(DC) -f docker_compose/db/docker-compose.yml down
+
+down-db-prod:
+	$(DC) -f docker_compose/db/docker-compose-prod.yml down
 
 down-db-volumes:
 	$(DC) -f docker_compose/db/docker-compose.yml down -v
@@ -153,8 +192,15 @@ up-django-no-cache:
 	$(DC) -f docker_compose/django/docker-compose.yml $(ENV) build --no-cache
 	$(DC) -f docker_compose/django/docker-compose.yml $(ENV) up -d
 
+up-django-no-cache-prod:
+	$(DC) -f docker_compose/django/docker-compose-prod.yml $(ENV) build --no-cache
+	$(DC) -f docker_compose/django/docker-compose-prod.yml $(ENV) up -d
+
 down-django:
 	$(DC) -f docker_compose/django/docker-compose.yml down
+
+down-django-prod:
+	$(DC) -f docker_compose/django/docker-compose-prod.yml down
 
 down-django-volumes:
 	$(DC) -f docker_compose/django/docker-compose.yml down -v
@@ -187,8 +233,14 @@ test-apm:
 up-pgadmin:
 	$(DC) -f docker_compose/pgadmin/docker-compose.yml $(ENV) up -d
 
+up-pgadmin-prod:
+	$(DC) -f docker_compose/pgadmin/docker-compose-prod.yml $(ENV) up -d
+
 down-pgadmin:
 	$(DC) -f docker_compose/pgadmin/docker-compose.yml down
+
+down-pgadmin-prod:
+	$(DC) -f docker_compose/pgadmin/docker-compose-prod.yml down
 
 logs-pgadmin:
 	$(LOGS) pgadmin
@@ -197,8 +249,14 @@ logs-pgadmin:
 up-adminer:
 	$(DC) -f docker_compose/adminer/docker-compose.yml $(ENV) up -d
 
+up-adminer-prod:
+	$(DC) -f docker_compose/adminer/docker-compose-prod.yml $(ENV) up -d
+
 down-adminer:
 	$(DC) -f docker_compose/adminer/docker-compose.yml down
+
+down-adminer-prod:
+	$(DC) -f docker_compose/adminer/docker-compose-prod.yml down
 
 logs-adminer:
 	$(LOGS) adminer-postgres
@@ -258,3 +316,26 @@ stop-all:
 
 rm-all:
 	docker rm $(docker ps -q -a)
+
+# FastAPI
+up-fastapi:
+	$(DC) -f docker_compose/fastapi/docker-compose.yml $(ENV) up -d
+
+up-fastapi-prod:
+	$(DC) -f docker_compose/fastapi/docker-compose-prod.yml $(ENV) up -d
+
+up-fastapi-no-cache:
+	$(DC) -f docker_compose/fastapi/docker-compose.yml $(ENV) build --no-cache
+	$(DC) -f docker_compose/fastapi/docker-compose.yml $(ENV) up -d
+
+down-fastapi:
+	$(DC) -f docker_compose/fastapi/docker-compose.yml down
+
+down-fastapi-prod:
+	$(DC) -f docker_compose/fastapi/docker-compose-prod.yml down
+
+down-fastapi-volumes:
+	$(DC) -f docker_compose/fastapi/docker-compose.yml down -v
+
+logs-fastapi:
+	$(LOGS) $(APP_CONTAINER)
