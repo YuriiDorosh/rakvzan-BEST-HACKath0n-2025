@@ -1,1 +1,1 @@
-from .setup import SetupProfileViewSet
+from .setup import ProfileViewSet
