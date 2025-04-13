@@ -24,6 +24,7 @@ from src.apps.establishments.services.comments import(
     CommentService,
     ORMCommentService,
 )
+from src.apps.establishments.services.routes import generate_random_route
 
 
 @api_controller(
@@ -37,6 +38,34 @@ class EstablishmentController:
         self.establishment_service: EstablishmentService = ORMEstablishmentService()
         self.establishment_photo_service: EstablishmentPhotoService = ORMEstablishmentPhotoService()
         self.establishment_comment_service: CommentService = ORMCommentService()
+
+    @route.get(
+        "/generate_route",
+        response=ApiResponse[dict],
+        auth=NOT_SET,
+        permissions=[permissions.AllowAny],
+    )
+    def generate_route(
+        self,
+        request: HttpRequest,
+        lat_a: float = Query(None),
+        lon_a: float = Query(None),
+        lat_b: float = Query(None),
+        lon_b: float = Query(None),
+    ) -> ApiResponse[dict]:
+        route = generate_random_route(
+            latA=lat_a,
+            lonA=lon_a,
+            latB=lat_b,
+            lonB=lon_b,
+        )
+        
+        return ApiResponse(
+            data={
+                "data": route,
+                },
+        )
+
 
     @route.get(
         "/list",
