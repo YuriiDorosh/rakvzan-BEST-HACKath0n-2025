@@ -82,6 +82,7 @@ class Establishment(TimedAndUnixIdBaseModel):
         on_delete=models.CASCADE,
         verbose_name=_("User"),
         help_text=_("User associated with the progress"),
+        related_name="establishments",
     )
     has_ramp = models.BooleanField(
         default=False,
