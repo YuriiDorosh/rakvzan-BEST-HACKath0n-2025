@@ -20,7 +20,7 @@ APM_CONTAINER = apm-server
 FASTAPI_CONTAINER = fastapi
 
 NETWORK_NAME = backend
-NETWORK_NAME_PROD = backend_prod
+NETWORK_NAME_PROD = backend-prod
 
 MAKE = make
 
