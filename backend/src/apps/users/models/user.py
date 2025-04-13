@@ -1,10 +1,10 @@
 import uuid
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from src.apps.users.managers import UserManager
-from django.core.mail import send_mail
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -31,7 +31,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]
-
 
     class Meta:
         db_table = "auth_user"

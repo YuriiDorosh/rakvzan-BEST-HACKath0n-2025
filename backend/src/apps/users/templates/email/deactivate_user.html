@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Deactivation</title>
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        font-family: Arial, sans-serif;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background-color: #ff9800;
+        text-align: center;
+        padding: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #ffffff;
+      }
+      .content {
+        padding: 20px;
+        color: #333333;
+      }
+      .content p {
+        line-height: 1.5;
+        font-size: 16px;
+      }
+      .footer {
+        font-size: 12px;
+        text-align: center;
+        color: #888888;
+        padding: 15px;
+        border-top: 1px solid #dddddd;
+      }
+      @media only screen and (max-width: 600px) {
+        .email-container {
+          width: 100% !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>Account Deactivation</h1>
+      </div>
+      <div class="content">
+        <p>Hi {{ user.username }},</p>
+        <p>
+          Your account has been successfully deactivated.
+        </p>
+        <p>
+          If this was not you or you wish to reactivate your account, please contact support.
+        </p>
+      </div>
+      <div class="footer">
+        <p>
+          If you did not request this, please ignore this email.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -8,22 +8,21 @@ from ninja_extra import api_controller, permissions, route
 from ninja_jwt.authentication import JWTAuth
 from src.api.v1.ninja.base_schemas import ApiResponse, StatusOkSchema
 from src.api.v1.ninja.establishment.schemas import (
+    CommentCreateSchema,
+    CommentLikeSchema,
+    CommentSchema,
     EstablishmentCreateSchema,
     EstablishmentSchema,
     EstablishmentSimpleSchema,
     EstablishmentUpdateSchema,
-    CommentSchema,
-    CommentLikeSchema,
-    CommentImageSchema,
-    CommentCreateSchema,
+)
+from src.apps.establishments.services.comments import (
+    CommentService,
+    ORMCommentService,
 )
 from src.apps.establishments.services.establishments import (
     EstablishmentPhotoService, EstablishmentService,
     ORMEstablishmentPhotoService, ORMEstablishmentService,
-)
-from src.apps.establishments.services.comments import(
-    CommentService,
-    ORMCommentService,
 )
 
 
@@ -242,7 +241,7 @@ class EstablishmentController:
                 status=is_photo_deleted,
             ),
         )
-    
+
     @route.get(
         "/{establishment_id}/comments",
         response=ApiResponse[List[CommentSchema]],
@@ -263,7 +262,7 @@ class EstablishmentController:
         return ApiResponse(
             data=data,
         )
-        
+
     @route.post(
         "/{establishment_id}/comments/like",
         response=ApiResponse[CommentLikeSchema],
@@ -289,7 +288,7 @@ class EstablishmentController:
         return ApiResponse(
             data=data,
         )
-        
+
     @route.delete(
         "/{establishment_id}/comments/like",
         response=ApiResponse[StatusOkSchema],
@@ -342,7 +341,7 @@ class EstablishmentController:
         return ApiResponse(
             data=data,
         )
-        
+
     @route.delete(
         "/{establishment_id}/comments/{comment_id}",
         response=ApiResponse[StatusOkSchema],
@@ -365,7 +364,7 @@ class EstablishmentController:
         return ApiResponse(
             data=StatusOkSchema(status=True),
         )
-        
+
     @route.delete(
         "/{establishment_id}/comments/{comment_id}/images/{image_id}",
         response=ApiResponse[StatusOkSchema],
@@ -387,7 +386,7 @@ class EstablishmentController:
         return ApiResponse(
             data=StatusOkSchema(status=True),
         )
-        
+
     @route.get(
         "/comments",
         response=ApiResponse[List[CommentSchema]],
@@ -411,9 +410,9 @@ class EstablishmentController:
                 establishment_id=establishment_id,
                 user_id=user_id,
             )
-        
+
         data = [CommentSchema.from_entity(comment) for comment in comments]
-        
+
         return ApiResponse(
             data=data,
         )

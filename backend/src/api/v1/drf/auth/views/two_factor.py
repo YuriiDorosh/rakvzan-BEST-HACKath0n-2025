@@ -13,8 +13,8 @@ from src.api.v1.drf.auth.serializers import (
     Confirm2FASerializer,
     Enable2FASerializer,
 )
-from src.apps.users.services.qr_code import generate_qr_code_file
 from src.apps.common.permissions import IsNot2FA
+from src.apps.users.services.qr_code import generate_qr_code_file
 
 
 class Enable2FAView(CreateAPIView):
@@ -54,7 +54,7 @@ class Enable2FAView(CreateAPIView):
         filename, expiration = generate_qr_code_file(config_url)
         host = request.get_host()
         scheme = request.scheme
-        file_url = f"{scheme}://{host}/api/auth/qr_codes/{filename}"
+        file_url = f"{scheme}://{host}/api/v1/drf/auth/qr_codes/{filename}"
 
         return Response(
             {
