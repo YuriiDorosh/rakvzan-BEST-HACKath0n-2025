@@ -22,7 +22,7 @@ config_files = [
     "apps.py",
     "auth.py",
     "boilerplate.py",
-    "celery.py",
+    # "celery.py",
     "database.py",
     "internationalization.py",
     "logging_comp.py",
