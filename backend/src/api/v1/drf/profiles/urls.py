@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 import src.api.v1.drf.profiles.views as views
 
 router = DefaultRouter()
-router.register(r'', views.SetupProfileViewSet, basename='profile-setup')
+router.register(r'', views.ProfileViewSet, basename='profile-setup')
 
 urlpatterns = [
     path('', include(router.urls)),

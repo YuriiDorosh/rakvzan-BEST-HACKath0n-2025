@@ -2,16 +2,15 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from src.api.v1.drf.schemas import ApiResponse
-from src.api.v1.drf.profiles.serializers import SetupProfileSerializer
+from src.api.v1.drf.profiles.serializers import ProfileSerializer
 
 User = get_user_model()
 
-class SetupProfileViewSet(viewsets.GenericViewSet):
+class ProfileViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
-    serializer_class = SetupProfileSerializer
+    serializer_class = ProfileSerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Get any user profile by ID (pk)"""
