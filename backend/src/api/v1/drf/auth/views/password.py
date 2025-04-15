@@ -5,6 +5,7 @@ from django_ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.request import Request
+
 from src.api.v1.drf.auth.serializers import (
     ChangepasswordSerializer,
     ResetPasswordConfirmSerializer,

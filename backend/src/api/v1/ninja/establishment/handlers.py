@@ -6,23 +6,23 @@ from ninja.constants import NOT_SET
 from ninja.files import UploadedFile
 from ninja_extra import api_controller, permissions, route
 from ninja_jwt.authentication import JWTAuth
+
 from src.api.v1.ninja.base_schemas import ApiResponse, StatusOkSchema
 from src.api.v1.ninja.establishment.schemas import (
+    CommentCreateSchema,
+    CommentLikeSchema,
+    CommentSchema,
     EstablishmentCreateSchema,
     EstablishmentSchema,
     EstablishmentSimpleSchema,
     EstablishmentUpdateSchema,
-    CommentSchema,
-    CommentLikeSchema,
-    CommentCreateSchema,
 )
+from src.apps.establishments.services.comments import CommentService, ORMCommentService
 from src.apps.establishments.services.establishments import (
-    EstablishmentPhotoService, EstablishmentService,
-    ORMEstablishmentPhotoService, ORMEstablishmentService,
-)
-from src.apps.establishments.services.comments import(
-    CommentService,
-    ORMCommentService,
+    EstablishmentPhotoService,
+    EstablishmentService,
+    ORMEstablishmentPhotoService,
+    ORMEstablishmentService,
 )
 from src.apps.establishments.services.routes import generate_random_route
 
@@ -59,13 +59,12 @@ class EstablishmentController:
             latB=lat_b,
             lonB=lon_b,
         )
-        
+
         return ApiResponse(
             data={
                 "data": route,
-                },
+            },
         )
-
 
     @route.get(
         "/list",
@@ -431,12 +430,12 @@ class EstablishmentController:
             user_id = request.user.id
         else:
             user_id = None
-            
+
         comments = self.establishment_comment_service.get_comments(
             establishment_id=establishment_id,
             user_id=user_id,
         )
-        
+
         data = [CommentSchema.from_entity(comment) for comment in comments]
 
         return ApiResponse(

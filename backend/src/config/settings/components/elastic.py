@@ -1,4 +1,5 @@
 import environ
+
 from src.config.settings.main import BASE_DIR
 
 env = environ.Env()

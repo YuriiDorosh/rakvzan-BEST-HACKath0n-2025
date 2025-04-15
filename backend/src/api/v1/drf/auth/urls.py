@@ -1,5 +1,6 @@
-import src.api.v1.drf.auth.views as views
 from django.urls import path
+
+import src.api.v1.drf.auth.views as views
 
 urlpatterns = [
     # User

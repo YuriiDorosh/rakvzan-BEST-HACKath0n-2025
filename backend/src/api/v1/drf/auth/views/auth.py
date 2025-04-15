@@ -1,22 +1,19 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django_ratelimit.decorators import ratelimit
+from google.auth.transport import requests
+from google.oauth2 import id_token
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.request import Request
+
+from src.api.v1.drf.auth.serializers import LoginUserSerializer, UserAuthSerializer
 from src.api.v1.drf.schemas import ApiResponse
-from src.api.v1.drf.auth.serializers import (
-    LoginUserSerializer,
-    UserAuthSerializer,
-)
 from src.apps.common.permissions import IsNotAuthenticated
 from src.apps.users.services.emails import send_email
 from src.apps.users.services.tokens import create_jwt_pair_for_user
-from django.conf import settings
-from google.auth.transport import requests
-from google.oauth2 import id_token
-
 
 User = get_user_model()
 
@@ -85,12 +82,18 @@ class GoogleLoginView(CreateAPIView):
         except ValueError:
             return ApiResponse({"error": "Invalid Google token"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        if idinfo.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
+        if idinfo.get("iss") not in [
+            "accounts.google.com",
+            "https://accounts.google.com",
+        ]:
             return ApiResponse({"error": "Invalid issuer"}, status=status.HTTP_401_UNAUTHORIZED)
 
         email = idinfo.get("email")
         if not email:
-            return ApiResponse({"error": "Google token did not provide an email"}, status=status.HTTP_400_BAD_REQUEST)
+            return ApiResponse(
+                {"error": "Google token did not provide an email"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         user, created = User.objects.get_or_create(
             email=email,

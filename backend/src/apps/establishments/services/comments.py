@@ -5,15 +5,19 @@ from uuid import UUID
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import UploadedFile
 from django.shortcuts import get_object_or_404
+
 from src.apps.establishments.entities import CommentEntity, CommentLikeEntity
-from src.apps.establishments.models import Comment as CommentModel, CommentImage as CommentImageModel, CommentLike as CommentLikeModel, Establishment as EstablishmentModel
+from src.apps.establishments.models import Comment as CommentModel
+from src.apps.establishments.models import CommentImage as CommentImageModel
+from src.apps.establishments.models import CommentLike as CommentLikeModel
+from src.apps.establishments.models import Establishment as EstablishmentModel
 
 
 class CommentService(ABC):
     @abstractmethod
     def get_comments(
-        self, 
-        establishment_id: Optional[int] = None, 
+        self,
+        establishment_id: Optional[int] = None,
         user_id: Optional[UUID] = None,
     ) -> List[CommentEntity]:
         """Get comments for an establishment"""
@@ -59,7 +63,7 @@ class CommentService(ABC):
 class ORMCommentService(CommentService):
     def get_comments(
         self,
-        establishment_id: Optional[int] = None, 
+        establishment_id: Optional[int] = None,
         user_id: Optional[UUID] = None,
     ) -> List[CommentEntity]:
         """Get comments for an establishment"""
@@ -92,12 +96,12 @@ class ORMCommentService(CommentService):
         if images:
             for image in images:
                 CommentImageModel.objects.create(comment=comment_instance, image=image)
-                
+
         if rating is not None:
             establishment = EstablishmentModel.objects.get(id=establishment_id)
-            establishment.raiting = (
-                (establishment.raiting * establishment.comments.count()) + rating
-            ) / (establishment.comments.count() + 1)
+            establishment.raiting = ((establishment.raiting * establishment.comments.count()) + rating) / (
+                establishment.comments.count() + 1
+            )
             establishment.save()
         return comment_instance.to_entity()
 
@@ -116,11 +120,11 @@ class ORMCommentService(CommentService):
 
         if rating is not None:
             establishment = EstablishmentModel.objects.get(id=comment_instance.establishment_id)
-            establishment.raiting = (
-                (establishment.raiting * establishment.comments.count()) + rating
-            ) / (establishment.comments.count() + 1)
+            establishment.raiting = ((establishment.raiting * establishment.comments.count()) + rating) / (
+                establishment.comments.count() + 1
+            )
             establishment.save()
-        
+
         return comment_instance.to_entity()
 
     def like_comment(self, comment_id: int, user: User) -> CommentLikeEntity:

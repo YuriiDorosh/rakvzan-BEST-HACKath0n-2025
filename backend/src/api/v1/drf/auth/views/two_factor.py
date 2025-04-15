@@ -9,10 +9,8 @@ from django_ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
-from src.api.v1.drf.auth.serializers import (
-    Confirm2FASerializer,
-    Enable2FASerializer,
-)
+
+from src.api.v1.drf.auth.serializers import Confirm2FASerializer, Enable2FASerializer
 from src.apps.common.permissions import IsNot2FA
 from src.apps.users.services.qr_code import generate_qr_code_file
 
