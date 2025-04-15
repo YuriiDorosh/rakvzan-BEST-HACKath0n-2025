@@ -1,2 +1,2 @@
-from .setup import ProfileSerializer
 from .comments import CommentSerializer
+from .setup import ProfileSerializer

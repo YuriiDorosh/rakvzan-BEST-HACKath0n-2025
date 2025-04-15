@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from src.apps.establishments.models import Comment, Establishment
 
 
@@ -27,7 +28,7 @@ class EstablishmentSerializer(serializers.ModelSerializer):
             "longitude",
             "created_at",
             "updated_at",
-            "first_image"
+            "first_image",
         ]
 
     def get_first_image(self, obj):
@@ -50,7 +51,6 @@ class CommentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "establishment",
-
         ]
         read_only_fields = [
             "id",

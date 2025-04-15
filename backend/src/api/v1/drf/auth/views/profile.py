@@ -7,6 +7,7 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
+
 from src.api.v1.drf.auth.serializers import ConfirmUserSerializer
 from src.api.v1.drf.schemas import ApiResponse
 from src.apps.common.permissions import IsNotConfirmed
@@ -101,7 +102,10 @@ class ResendEmailConfirmationView(APIView):
             return ApiResponse(data={"code": code}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            return ApiResponse(status=status.HTTP_400_BAD_REQUEST, errors=[f"Unexpected error occurred: {e}"])
+            return ApiResponse(
+                status=status.HTTP_400_BAD_REQUEST,
+                errors=[f"Unexpected error occurred: {e}"],
+            )
 
 
 class DeleteUserView(GenericAPIView):

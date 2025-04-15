@@ -482,3 +482,4 @@ sketch
 ### xmake ###
 # Xmake cache
 .xmake/
+backup_*.sql  

@@ -1,4 +1,5 @@
 from django.urls import include, path
+
 from src.api.v1.ninja.urls import api
 
 urlpatterns = [

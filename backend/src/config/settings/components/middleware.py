@@ -1,12 +1,13 @@
 import environ
+
 from src.config.settings.components.boilerplate import BASE_DIR
 
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env")
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

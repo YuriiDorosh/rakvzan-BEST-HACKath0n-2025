@@ -2,6 +2,7 @@ from typing import Any, Generic, TypeVar
 
 from ninja import Schema
 from pydantic import Field
+
 from src.api.v1.ninja.filters import PaginationOut
 
 TData = TypeVar("TData")

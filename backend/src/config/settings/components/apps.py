@@ -2,6 +2,7 @@ import os
 import sys
 
 import environ
+
 from config.settings.components.boilerplate import BASE_DIR
 
 env = environ.Env()
@@ -34,7 +35,7 @@ THIRD_PARTY = [
     # "totp",
     "django_otp",
     "django_otp.plugins.otp_totp",
-    #CORS
+    # CORS
 ]
 
 if env("USE_ELASTIC") == 1:

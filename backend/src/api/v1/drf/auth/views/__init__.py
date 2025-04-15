@@ -1,3 +1,4 @@
+from .auth import GoogleLoginView, RegistrateUserView, UserLoginView
 from .password import ChangePasswordView, ResetPasswordConfirmView, ResetPasswordView
 from .profile import (
     ConfirmEmailView,
@@ -8,4 +9,3 @@ from .profile import (
     ResendEmailConfirmationView,
 )
 from .two_factor import Confirm2FAView, Enable2FAView, serve_qr_code
-from .auth import RegistrateUserView, UserLoginView, GoogleLoginView
